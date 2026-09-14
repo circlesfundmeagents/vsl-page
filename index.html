@@ -43,6 +43,13 @@
   a{color:inherit;text-decoration:none;}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;position:relative;z-index:2;}
   section{position:relative;}
+  section.pad::before, section.pad.tight::before, .partners::before{
+    content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+    background-image:radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size:26px 26px;
+    -webkit-mask-image:radial-gradient(80% 90% at 50% 30%, #000 0%, transparent 78%);
+    mask-image:radial-gradient(80% 90% at 50% 30%, #000 0%, transparent 78%);
+  }
   .eyebrow{
     display:inline-flex;align-items:center;gap:8px;
     font-size:13px;font-weight:600;color:#7CF2B8;
@@ -90,7 +97,7 @@
   .nav-links a:hover{color:#7CF2B8;}
   .nav-cta{display:flex;gap:12px;align-items:center;}
   .nav-cta .btn{padding:11px 24px;font-size:14px;}
-  @media(max-width:860px){ .nav-links{display:none;} }
+  @media(max-width:860px){ .nav-links{display:none;} .nav-cta .btn-primary{display:none;} }
 
   /* HERO */
   .hero{
@@ -109,6 +116,12 @@
     filter:drop-shadow(0 0 26px rgba(0,212,136,0.45));
   }
   .hero p.sub{font-size:17.5px;color:var(--muted);max-width:640px;margin:0 auto 38px;}
+  @media(max-width:640px){
+    .hero{padding:52px 0 36px;}
+    .hero h1{font-size:30px;margin-bottom:16px;line-height:1.22;}
+    .hero p.sub{font-size:15px;margin-bottom:26px;}
+    .eyebrow{font-size:12px;padding:5px 12px;margin-bottom:14px;}
+  }
 
   /* VSL VIDEO PLAYER */
   .vsl-wrap{
@@ -160,6 +173,17 @@
   .sec-head h2{font-size:36px;margin-bottom:16px;letter-spacing:-0.02em;}
   .sec-head p{color:var(--muted);font-size:16px;}
 
+  @media(max-width:640px){
+    section.pad{padding:56px 0;}
+    section.pad.tight{padding:48px 0;}
+    .sec-head{margin-bottom:32px;}
+    .sec-head h2{font-size:26px;}
+    .sec-head p{font-size:14.5px;}
+    h2{font-size:26px !important;}
+    h3{font-size:19px !important;}
+    .wrap{padding:0 18px;}
+  }
+
   section.pad{padding:96px 0;}
   section.pad.tight{padding:80px 0;}
 
@@ -168,8 +192,16 @@
   @media(max-width:900px){.about-grid{grid-template-columns:1fr;}}
   .about-grid p{color:var(--muted);margin-bottom:16px;font-size:15.5px;}
   .about-grid strong{color:var(--ink);}
-  .about-photo{border-radius:20px;overflow:hidden;position:relative;box-shadow:0 30px 70px -20px rgba(0,0,0,0.6), 0 0 0 1px var(--line);}
-  .about-photo img{width:100%;height:100%;object-fit:cover;filter:saturate(1.05);}
+  .about-photo{position:relative;}
+  .about-photo-inner{border-radius:20px;overflow:hidden;box-shadow:0 30px 70px -20px rgba(0,0,0,0.6), 0 0 0 1px var(--line);}
+  .about-photo-inner img{width:100%;height:100%;object-fit:cover;filter:saturate(1.05);}
+  .float-phone-card{
+    position:absolute;right:-14px;bottom:-26px;width:120px;
+    filter:drop-shadow(0 20px 30px rgba(0,0,0,0.6));
+    animation:floatY 4.5s ease-in-out infinite;
+  }
+  @media(max-width:640px){ .float-phone-card{width:88px;right:-8px;bottom:-16px;} }
+  @keyframes floatY{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
 
   /* PRODUCT CARDS */
   .card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
@@ -303,6 +335,14 @@
   }
   .lead-grid{display:grid;grid-template-columns:1fr 0.9fr;gap:60px;align-items:center;}
   @media(max-width:900px){.lead-grid{grid-template-columns:1fr;}}
+  .lead-copy{position:relative;}
+  .lead-phone-accent{
+    position:absolute;top:-64px;right:-24px;width:150px;opacity:0.16;
+    pointer-events:none;filter:grayscale(0.3);transform:rotate(8deg);
+    z-index:0;
+  }
+  .lead-copy > *{position:relative;z-index:1;}
+  @media(max-width:900px){ .lead-phone-accent{display:none;} }
   .lead-grid h2{color:#fff;font-size:34px;margin-bottom:18px;}
   .lead-grid p{color:var(--muted);font-size:15.5px;margin-bottom:24px;}
   .lead-points li{list-style:none;color:rgba(255,255,255,0.82);font-size:14.5px;padding:9px 0 9px 26px;position:relative;}
@@ -340,10 +380,19 @@
     position:fixed;bottom:0;left:0;right:0;z-index:60;
     background:rgba(6,20,14,0.92);backdrop-filter:blur(10px);
     border-top:1px solid var(--line);
-    padding:12px 20px;display:none;align-items:center;justify-content:space-between;gap:14px;
+    padding:12px 16px;display:none;align-items:center;justify-content:space-between;gap:10px;
   }
-  .sticky-cta span{font-size:14px;font-weight:600;color:#fff;}
-  @media(max-width:760px){ .sticky-cta{display:flex;} body{padding-bottom:76px;} }
+  .sticky-cta span{font-size:13.5px;font-weight:600;color:#fff;line-height:1.25;}
+  .sticky-cta .sticky-short{display:none;}
+  .sticky-cta .btn{padding:11px 20px;font-size:13.5px;flex-shrink:0;white-space:nowrap;}
+  @media(max-width:760px){ .sticky-cta{display:flex;} body{padding-bottom:70px;} }
+  @media(max-width:380px){
+    .sticky-cta span{font-size:12.5px;}
+    .sticky-cta .sticky-full{display:none;}
+    .sticky-cta .sticky-short{display:inline;}
+    .sticky-cta{padding:10px 14px;}
+    .sticky-cta .btn{padding:10px 16px;font-size:13px;}
+  }
 
 
   /* ============ SCROLL REVEAL ============ */
@@ -378,8 +427,17 @@
   }
 
   /* ============ TYPEWRITER WORD ============ */
-  .typewriter-word{display:inline-block;min-width:7.4ch;text-align:left;white-space:nowrap;vertical-align:top;}
+  .typewriter-word{display:inline-block;min-width:5.6ch;text-align:center;white-space:nowrap;vertical-align:top;}
   .cursor{display:inline;margin-left:2px;animation:blink 1s step-end infinite;font-weight:400;}
+  .hero-word-pill{
+    display:inline-flex;align-items:center;justify-content:center;
+    margin:6px 0 2px;padding:8px 32px;border-radius:100px;
+    background:linear-gradient(90deg, rgba(0,212,136,0.12), rgba(255,178,62,0.12));
+    border:1.5px solid rgba(0,212,136,0.4);
+    box-shadow:0 0 50px -10px rgba(0,212,136,0.6), inset 0 0 20px -10px rgba(255,178,62,0.4);
+  }
+  .hero-word-pill .accent{filter:none;}
+  @media(max-width:640px){ .hero-word-pill{padding:6px 24px;margin:4px 0;} }
   @keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
 
   /* ============ MOBILE NAV ============ */
@@ -412,10 +470,27 @@
   .partner-chip:hover{transform:translateY(-3px);box-shadow:0 16px 34px -12px rgba(0,212,136,0.35);}
   .partner-chip img{height:26px;width:auto;filter:none;opacity:1;}
 
-  /* ============ QUOTE TESTIMONIALS (new section) ============ */
-  .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
-  @media(max-width:900px){.quote-grid{grid-template-columns:1fr;}}
+  /* Mobile-only marquee version of the partner strip */
+  .partner-marquee{display:none;position:relative;overflow:hidden;width:100%;}
+  .partner-marquee:before, .partner-marquee:after{
+    content:"";position:absolute;top:0;bottom:0;width:36px;z-index:2;pointer-events:none;
+  }
+  .partner-marquee:before{left:0;background:linear-gradient(90deg, var(--bg-1) 0%, transparent 100%);}
+  .partner-marquee:after{right:0;background:linear-gradient(270deg, var(--bg-1) 0%, transparent 100%);}
+  .marquee-track{display:flex;align-items:center;gap:14px;width:max-content;animation:marqueeScroll 16s linear infinite;}
+  .marquee-track .partner-chip{padding:11px 18px;}
+  .marquee-track .partner-chip img{height:20px;}
+  @keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  @media(max-width:640px){ .partner-row{display:none;} .partner-marquee{display:block;} }
+
+  /* ============ QUOTE TESTIMONIALS (carousel) ============ */
+  .quote-track{
+    display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;
+    padding:6px 4px 20px;scrollbar-width:none;
+  }
+  .quote-track::-webkit-scrollbar{display:none;}
   .quote-card{
+    flex:0 0 auto;width:280px;scroll-snap-align:start;
     border:1px solid var(--line);border-radius:var(--radius);
     padding:30px 28px;background:var(--surface);
     transition:transform .2s ease, border-color .2s ease;
@@ -425,44 +500,49 @@
   .quote-card .testi-quote{color:var(--muted);font-style:normal;font-size:14.5px;line-height:1.6;}
 
   /* ============ TABBED PROGRESS SHOWCASE ============ */
-  .showcase-grid{display:grid;grid-template-columns:0.85fr 1fr;gap:56px;align-items:center;}
-  @media(max-width:900px){.showcase-grid{grid-template-columns:1fr;}}
-  .tab-list{display:flex;flex-direction:column;gap:4px;}
-  .tab-item{
-    padding:20px 22px;border-radius:14px;cursor:pointer;
-    border:1px solid transparent;transition:background .25s ease, border-color .25s ease;
-    position:relative;
+  /* ============ SCROLL-DRIVEN "HOW IT WORKS" RAIL ============ */
+  .scrolly-outer{position:relative;}
+  .scrolly-outer .glow-orb{width:420px;height:420px;top:10%;left:-10%;}
+  .scrolly-steps-wrap{position:relative;max-width:640px;margin:0 auto;padding-left:38px;}
+  .scrolly-rail-track{position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:rgba(255,255,255,0.16);border-radius:2px;}
+  .scrolly-rail-fill{position:absolute;left:5px;top:6px;width:2px;height:0%;background:linear-gradient(180deg,var(--green),var(--amber));border-radius:2px;box-shadow:0 0 12px rgba(0,212,136,0.6);}
+  .scrolly-rail-dot{
+    position:absolute;left:0px;top:6px;width:12px;height:12px;border-radius:50%;
+    background:var(--amber);box-shadow:0 0 16px rgba(255,178,62,0.85), 0 0 0 4px rgba(255,178,62,0.15);
+    transform:translateY(-50%);
   }
-  .tab-item:hover{background:rgba(255,255,255,0.03);}
-  .tab-item.active{background:var(--surface);border-color:var(--line-strong);}
-  .tab-item .tab-title{display:flex;align-items:center;gap:12px;font-family:'Outfit';font-weight:700;font-size:16.5px;color:var(--ink);margin-bottom:8px;}
-  .tab-item .tab-num{
-    width:26px;height:26px;border-radius:50%;flex-shrink:0;
-    background:rgba(255,255,255,0.06);color:var(--muted);
-    display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;
-    transition:background .2s ease, color .2s ease;
+  .scrolly-step{padding-bottom:64px;opacity:0.35;transition:opacity .4s ease;}
+  .scrolly-step:last-child{padding-bottom:8px;}
+  .scrolly-step.active{opacity:1;}
+  .scrolly-frame{
+    border:1px solid var(--line-strong);border-radius:20px;padding:22px;
+    background:radial-gradient(80% 90% at 50% 20%, rgba(0,212,136,0.12) 0%, transparent 70%), var(--surface);
+    margin-bottom:22px;display:flex;align-items:center;justify-content:center;
+    min-height:220px;box-shadow:0 30px 60px -25px rgba(0,0,0,0.6);
   }
-  .tab-item.active .tab-num{background:linear-gradient(135deg,var(--green),var(--green-deep));color:#04150E;}
-  .tab-item p{font-size:13.5px;color:var(--muted);max-height:0;overflow:hidden;transition:max-height .3s ease, margin .3s ease;margin:0;padding-left:38px;}
-  .tab-item.active p{max-height:60px;margin-top:2px;}
-  .tab-bar-track{height:2px;background:var(--line);border-radius:2px;margin-top:12px;margin-left:38px;overflow:hidden;display:none;}
-  .tab-item.active .tab-bar-track{display:block;}
-  .tab-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--amber));border-radius:2px;}
-  .tab-bar-fill.animating{transition:width 4.5s linear;width:100%;}
-
-  .showcase-visual{
-    position:relative;border-radius:22px;overflow:hidden;
-    background:radial-gradient(80% 80% at 50% 30%, rgba(0,212,136,0.14) 0%, transparent 70%), var(--surface);
-    border:1px solid var(--line-strong);
-    min-height:440px;display:flex;align-items:center;justify-content:center;padding:30px;
-    box-shadow:0 40px 80px -30px rgba(0,0,0,0.6);
+  .scrolly-frame img{max-height:230px;object-fit:contain;filter:drop-shadow(0 20px 25px rgba(0,0,0,0.5));}
+  .scrolly-step h3{font-size:22px;margin-bottom:10px;color:var(--muted);transition:color .3s ease;}
+  .scrolly-step.active h3{color:#fff;}
+  .scrolly-step h3 .step-no{color:var(--green);font-family:'Outfit';margin-right:8px;}
+  .scrolly-step p{color:var(--muted);font-size:14.5px;margin-bottom:20px;}
+  .pill-list{display:flex;flex-direction:column;gap:10px;}
+  .pill-item{
+    display:flex;align-items:center;gap:12px;background:var(--surface);
+    border:1px solid var(--line);border-radius:100px;padding:13px 22px 13px 14px;
+    font-size:13.5px;font-weight:600;color:var(--ink);width:fit-content;max-width:100%;
   }
-  .showcase-visual img{
-    max-height:400px;object-fit:contain;position:absolute;opacity:0;transition:opacity .45s ease, transform .45s ease;
-    transform:scale(0.96) translateY(10px);
+  .pill-check{
+    width:22px;height:22px;border-radius:50%;background:rgba(0,212,136,0.15);
+    border:1px solid rgba(0,212,136,0.4);color:#7CF2B8;display:flex;align-items:center;
+    justify-content:center;font-size:11px;flex-shrink:0;
   }
-  .showcase-visual img.active{opacity:1;transform:scale(1) translateY(0);position:relative;}
-  @media(max-width:900px){ .showcase-visual{min-height:320px;} }
+  @media(max-width:640px){
+    .scrolly-steps-wrap{padding-left:28px;}
+    .scrolly-frame{min-height:170px;padding:16px;}
+    .scrolly-frame img{max-height:170px;}
+    .scrolly-step h3{font-size:19px;}
+    .pill-item{font-size:12.5px;padding:11px 18px 11px 12px;}
+  }
 
   /* ============ VIDEO TESTIMONIAL CAROUSEL ============ */
   .carousel-outer{position:relative;}
@@ -548,7 +628,9 @@
   <div class="grid-texture"></div>
   <div class="wrap hero-inner">
     <span class="eyebrow reveal">For Commercial Drivers</span>
-    <h1 class="reveal reveal-delay-1">Dear Commercial Driver: What If You Could <span class="accent">Own Your <span id="heroWord" class="typewriter-word"><span id="heroWordText">Vehicle</span><span class="cursor">|</span></span></span> Without Buying It First?</h1>
+    <h1 class="reveal reveal-delay-1">Dear Commercial Driver: What If You Could <span class="accent">Own Your</span><br>
+    <span class="hero-word-pill"><span class="accent typewriter-word" id="heroWord"><span id="heroWordText">Vehicle</span><span class="cursor">|</span></span></span><br>
+    Without Buying It First?</h1>
     <p class="sub reveal reveal-delay-2">CirclesFundMe helps you save steadily and use a simple payment plan to own your own vehicle. No more driving someone else's car or bus forever. Start saving now and work toward owning your ride.</p>
 
     <!-- VSL VIDEO — replace the <source src> below with your hosted video file or embed URL -->
@@ -588,6 +670,23 @@
       <div class="partner-chip"><img src="assets/partner-5.png" alt="Partner institution"></div>
       <div class="partner-chip"><img src="assets/partner-6.png" alt="Partner institution"></div>
     </div>
+
+    <div class="partner-marquee reveal reveal-delay-1">
+      <div class="marquee-track">
+        <div class="partner-chip"><img src="assets/partner-1.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-2.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-3.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-4.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-5.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-6.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-1.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-2.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-3.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-4.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-5.png" alt="Partner institution"></div>
+        <div class="partner-chip"><img src="assets/partner-6.png" alt="Partner institution"></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -599,30 +698,54 @@
       <h2>Real Words From Real Members</h2>
       <p>Short notes from drivers and riders growing with CirclesFundMe.</p>
     </div>
-    <div class="quote-grid">
-      <div class="quote-card reveal reveal-delay-1">
-        <div class="quote-stars">★★★★★</div>
-        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
-        <div class="testi-who">
-          <div class="testi-avatar"></div>
-          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+    <div class="carousel-outer reveal reveal-delay-1">
+      <div class="carousel-fade left"></div>
+      <div class="carousel-fade right"></div>
+      <div class="quote-track" id="quoteTrack">
+        <div class="quote-card">
+          <div class="quote-stars">★★★★★</div>
+          <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+          <div class="testi-who">
+            <div class="testi-avatar"></div>
+            <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+          </div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-stars">★★★★★</div>
+          <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+          <div class="testi-who">
+            <div class="testi-avatar"></div>
+            <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+          </div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-stars">★★★★★</div>
+          <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+          <div class="testi-who">
+            <div class="testi-avatar"></div>
+            <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+          </div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-stars">★★★★★</div>
+          <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+          <div class="testi-who">
+            <div class="testi-avatar"></div>
+            <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+          </div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-stars">★★★★★</div>
+          <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+          <div class="testi-who">
+            <div class="testi-avatar"></div>
+            <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+          </div>
         </div>
       </div>
-      <div class="quote-card reveal reveal-delay-2">
-        <div class="quote-stars">★★★★★</div>
-        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
-        <div class="testi-who">
-          <div class="testi-avatar"></div>
-          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
-        </div>
-      </div>
-      <div class="quote-card reveal reveal-delay-3">
-        <div class="quote-stars">★★★★★</div>
-        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
-        <div class="testi-who">
-          <div class="testi-avatar"></div>
-          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
-        </div>
+      <div class="carousel-arrows">
+        <button class="carousel-arrow" id="quotePrev" aria-label="Previous">‹</button>
+        <button class="carousel-arrow" id="quoteNext" aria-label="Next">›</button>
       </div>
     </div>
   </div>
@@ -631,7 +754,10 @@
 <!-- ABOUT / POSITIONING -->
 <section class="pad">
   <div class="wrap about-grid reveal">
-    <div class="about-photo"><img src="assets/lockup.jpg" alt="Driver building savings with CirclesFundMe"></div>
+    <div class="about-photo">
+      <div class="about-photo-inner"><img src="assets/lockup.jpg" alt="Driver building savings with CirclesFundMe"></div>
+      <div class="float-phone-card"><img src="assets/phone.png" alt="CirclesFundMe app dashboard"></div>
+    </div>
     <div>
       <span class="eyebrow">About CirclesFundMe</span>
       <h2 style="font-size:32px;margin-bottom:18px;">A Different Path to Owning the Vehicle You Drive</h2>
@@ -673,54 +799,79 @@
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="pad" id="how-it-works">
+<!-- HOW IT WORKS — scroll-driven progress rail -->
+<section class="pad scrolly-outer" id="how-it-works">
+  <div class="glow-orb glow-green"></div>
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head center reveal">
       <span class="eyebrow">The Pathway</span>
       <h2>How CirclesFundMe Works</h2>
-      <p>A clear, simple path from saving money to owning your vehicle.</p>
+      <p>A clear, simple path from saving money to owning your vehicle. Scroll to follow the journey.</p>
     </div>
-    <div class="showcase-grid">
-      <div class="tab-list reveal reveal-delay-1" id="tabList">
-        <div class="tab-item active" data-img="assets/phone.png">
-          <div class="tab-title"><span class="tab-num">01</span> Join</div>
-          <p>Sign up on your own, or join with your savings group.</p>
-          <div class="tab-bar-track"><div class="tab-bar-fill"></div></div>
-        </div>
-        <div class="tab-item" data-img="assets/phone.png">
-          <div class="tab-title"><span class="tab-num">02</span> Contribute</div>
-          <p>Save often to build a strong savings record.</p>
-          <div class="tab-bar-track"><div class="tab-bar-fill"></div></div>
-        </div>
-        <div class="tab-item" data-img="assets/tricycle.png">
-          <div class="tab-title"><span class="tab-num">03</span> Qualify</div>
-          <p>Your savings record unlocks a payment plan made for you.</p>
-          <div class="tab-bar-track"><div class="tab-bar-fill"></div></div>
-        </div>
-        <div class="tab-item" data-img="assets/bus.png">
-          <div class="tab-title"><span class="tab-num">04</span> Finance</div>
-          <p>Get the tricycle, bus, or vehicle you need to earn money.</p>
-          <div class="tab-bar-track"><div class="tab-bar-fill"></div></div>
-        </div>
-        <div class="tab-item" data-img="assets/phone.png">
-          <div class="tab-title"><span class="tab-num">05</span> Repay</div>
-          <p>Pay it back a little at a time, matched to your daily earnings.</p>
-          <div class="tab-bar-track"><div class="tab-bar-fill"></div></div>
-        </div>
-        <div class="tab-item" data-img="assets/truck.png">
-          <div class="tab-title"><span class="tab-num">06</span> Own &amp; Grow</div>
-          <p>Own your vehicle fully. Then qualify for an even bigger loan next time.</p>
-          <div class="tab-bar-track"><div class="tab-bar-fill"></div></div>
+
+    <div class="scrolly-steps-wrap" id="scrollyWrap">
+      <div class="scrolly-rail-track"></div>
+      <div class="scrolly-rail-fill" id="scrollyFill"></div>
+      <div class="scrolly-rail-dot" id="scrollyDot"></div>
+
+      <div class="scrolly-step active" data-step="0">
+        <div class="scrolly-frame"><img src="assets/phone.png" alt="Join CirclesFundMe"></div>
+        <h3><span class="step-no">01</span>Join</h3>
+        <p>Sign up on your own, or bring your savings group with you. It only takes a minute to get started.</p>
+        <div class="pill-list">
+          <div class="pill-item"><span class="pill-check">✓</span> Sign up alone or with a group</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Verified in minutes</div>
         </div>
       </div>
-      <div class="showcase-visual reveal reveal-delay-2" id="showcaseVisual">
-        <img src="assets/phone.png" class="active" alt="CirclesFundMe app — Join">
-        <img src="assets/phone.png" alt="CirclesFundMe app — Contribute">
-        <img src="assets/tricycle.png" alt="CirclesFundMe app — Qualify">
-        <img src="assets/bus.png" alt="CirclesFundMe app — Finance">
-        <img src="assets/phone.png" alt="CirclesFundMe app — Repay">
-        <img src="assets/truck.png" alt="CirclesFundMe app — Own and Grow">
+
+      <div class="scrolly-step" data-step="1">
+        <div class="scrolly-frame"><img src="assets/phone.png" alt="Contribute savings"></div>
+        <h3><span class="step-no">02</span>Contribute</h3>
+        <p>Save often, weekly or monthly, to build a strong savings record inside the app.</p>
+        <div class="pill-list">
+          <div class="pill-item"><span class="pill-check">✓</span> Track every contribution live</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Plans that fit your income</div>
+        </div>
+      </div>
+
+      <div class="scrolly-step" data-step="2">
+        <div class="scrolly-frame"><img src="assets/tricycle.png" alt="Qualify for financing"></div>
+        <h3><span class="step-no">03</span>Qualify</h3>
+        <p>Your savings record unlocks a payment plan made just for you — no rigid collateral needed.</p>
+        <div class="pill-list">
+          <div class="pill-item"><span class="pill-check">✓</span> Based on your own record</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Group guarantees help too</div>
+        </div>
+      </div>
+
+      <div class="scrolly-step" data-step="3">
+        <div class="scrolly-frame"><img src="assets/bus.png" alt="Finance your vehicle"></div>
+        <h3><span class="step-no">04</span>Finance</h3>
+        <p>Get the tricycle, bus, or vehicle you need to earn money — and start driving it right away.</p>
+        <div class="pill-list">
+          <div class="pill-item"><span class="pill-check">✓</span> Tricycles, buses, cars &amp; trucks</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Fast, transparent approval</div>
+        </div>
+      </div>
+
+      <div class="scrolly-step" data-step="4">
+        <div class="scrolly-frame"><img src="assets/phone.png" alt="Repay automatically"></div>
+        <h3><span class="step-no">05</span>Repay</h3>
+        <p>Pay it back a little at a time, matched automatically to your daily earnings.</p>
+        <div class="pill-list">
+          <div class="pill-item"><span class="pill-check">✓</span> Payments that flex with income</div>
+          <div class="pill-item"><span class="pill-check">✓</span> No surprise charges</div>
+        </div>
+      </div>
+
+      <div class="scrolly-step" data-step="5">
+        <div class="scrolly-frame"><img src="assets/truck.png" alt="Own and grow"></div>
+        <h3><span class="step-no">06</span>Own &amp; Grow</h3>
+        <p>Own your vehicle fully. Then qualify for an even bigger loan for your next one.</p>
+        <div class="pill-list">
+          <div class="pill-item"><span class="pill-check">✓</span> Full ownership, no strings</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Higher limits next time</div>
+        </div>
       </div>
     </div>
   </div>
@@ -959,7 +1110,8 @@
 <!-- LEAD FORM -->
 <section class="pad lead-section" id="apply">
   <div class="wrap lead-grid">
-    <div>
+    <div class="lead-copy">
+      <img class="lead-phone-accent" src="assets/phone.png" alt="">
       <span class="eyebrow on-dark">Get One Step Closer</span>
       <h2>Start Your Savings Plan Today</h2>
       <p>Fill in your details below. We'll reach out with next steps and add you to our WhatsApp group for updates and support.</p>
@@ -1031,7 +1183,8 @@
 </footer>
 
 <div class="sticky-cta">
-  <span>Ready to own your vehicle?</span>
+  <span class="sticky-full">Ready to own your vehicle?</span>
+  <span class="sticky-short">Own your vehicle</span>
   <a href="#apply" class="btn btn-primary">Apply Now</a>
 </div>
 
@@ -1115,47 +1268,52 @@
   // start the deleting/typing cycle after the initial pause on "Vehicle"
   setTimeout(()=>{ hwTyping = false; heroTypeStep(); }, 2200);
 
-  // ===== Tabbed progress showcase (How It Works) =====
-  const tabItems = document.querySelectorAll('#tabList .tab-item');
-  const showcaseImgs = document.querySelectorAll('#showcaseVisual img');
-  let tabIndex = 0, tabTimer = null;
-  function activateTab(i){
-    tabItems.forEach((t,idx)=>{
-      t.classList.toggle('active', idx===i);
-      const fill = t.querySelector('.tab-bar-fill');
-      fill.classList.remove('animating');
-      void fill.offsetWidth; // force reflow so the reset actually applies before re-animating
+  // ===== Scroll-driven progress rail (How It Works) =====
+  const scrollyWrap = document.getElementById('scrollyWrap');
+  if(scrollyWrap){
+    const scrollySteps = Array.from(scrollyWrap.querySelectorAll('.scrolly-step'));
+    const scrollyFill = document.getElementById('scrollyFill');
+    const scrollyDot = document.getElementById('scrollyDot');
+    let scrollyTicking = false;
+    function updateScrolly(){
+      const rect = scrollyWrap.getBoundingClientRect();
+      const total = scrollyWrap.offsetHeight;
+      const viewportRef = window.innerHeight * 0.42;
+      let progress = (viewportRef - rect.top) / total;
+      progress = Math.max(0, Math.min(1, progress));
+      scrollyFill.style.height = (progress * 100) + '%';
+      scrollyDot.style.top = (progress * total) + 'px';
+      let activeIndex = 0;
+      scrollySteps.forEach((s, i) => {
+        const r = s.getBoundingClientRect();
+        if (r.top - viewportRef < 40) activeIndex = i;
+      });
+      scrollySteps.forEach((s, i) => s.classList.toggle('active', i === activeIndex));
+      scrollyTicking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!scrollyTicking) { requestAnimationFrame(updateScrolly); scrollyTicking = true; }
     });
-    showcaseImgs.forEach((img,idx)=> img.classList.toggle('active', idx===i));
-    // restart the fill animation on the newly active tab
-    requestAnimationFrame(()=>{
-      const activeFill = tabItems[i].querySelector('.tab-bar-fill');
-      requestAnimationFrame(()=> activeFill.classList.add('animating'));
-    });
-    tabIndex = i;
+    window.addEventListener('resize', updateScrolly);
+    updateScrolly();
   }
-  function nextTab(){ activateTab((tabIndex + 1) % tabItems.length); }
-  function startAutoplay(){
-    clearInterval(tabTimer);
-    tabTimer = setInterval(nextTab, 4500);
-  }
-  tabItems.forEach((t,idx)=>{
-    t.addEventListener('click', ()=>{ activateTab(idx); startAutoplay(); });
-  });
-  activateTab(0);
-  startAutoplay();
 
-  // ===== Video testimonial carousel =====
-  const track = document.getElementById('carouselTrack');
-  const prevBtn = document.getElementById('carouselPrev');
-  const nextBtn = document.getElementById('carouselNext');
-  function carouselScrollBy(dir){
-    const card = track.querySelector('.video-testi-card');
-    const step = card ? card.offsetWidth + 20 : 250;
-    track.scrollBy({left: dir * step * 2, behavior:'smooth'});
+  // ===== Generic horizontal carousel wiring =====
+  function wireCarousel(trackId, prevId, nextId, cardSelector){
+    const t = document.getElementById(trackId);
+    const prev = document.getElementById(prevId);
+    const next = document.getElementById(nextId);
+    if(!t || !prev || !next) return;
+    function scrollByDir(dir){
+      const card = t.querySelector(cardSelector);
+      const step = card ? card.offsetWidth + 20 : 250;
+      t.scrollBy({left: dir * step * 2, behavior:'smooth'});
+    }
+    prev.addEventListener('click', ()=>scrollByDir(-1));
+    next.addEventListener('click', ()=>scrollByDir(1));
   }
-  prevBtn.addEventListener('click', ()=>carouselScrollBy(-1));
-  nextBtn.addEventListener('click', ()=>carouselScrollBy(1));
+  wireCarousel('carouselTrack', 'carouselPrev', 'carouselNext', '.video-testi-card');
+  wireCarousel('quoteTrack', 'quotePrev', 'quoteNext', '.quote-card');
 </script>
 
 </body>
