@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CirclesFundMe — Own the Vehicle You Drive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#00D488;
+    --green-deep:#00A86B;
+    --green-dim:#046B48;
+    --amber:#FFB23E;
+    --amber-deep:#F5A623;
+    --bg:#040D09;
+    --bg-1:#06140E;
+    --bg-2:#081B12;
+    --surface:#0B2118;
+    --surface-2:#0F281C;
+    --line:rgba(255,255,255,0.09);
+    --line-strong:rgba(255,255,255,0.16);
+    --white:#FFFFFF;
+    --ink:#F3FBF7;
+    --muted:rgba(243,251,247,0.62);
+    --muted-2:rgba(243,251,247,0.4);
+    --radius:16px;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{font-family:'Outfit',system-ui,sans-serif;color:var(--ink);line-height:1.1;font-weight:800;letter-spacing:-0.02em;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;position:relative;z-index:2;}
+  section{position:relative;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:600;color:#7CF2B8;
+    background:rgba(0,212,136,0.1);
+    border:1px solid rgba(0,212,136,0.25);
+    padding:6px 14px;border-radius:100px;
+    margin-bottom:20px;
+  }
+  .eyebrow.on-dark{color:#7CF2B8;background:rgba(0,212,136,0.1);}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:16px 30px;border-radius:100px;font-weight:600;font-size:15.5px;
+    border:none;cursor:pointer;transition:transform .18s ease, box-shadow .18s ease;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
+    color:#04150E;font-weight:700;
+    box-shadow:0 0 0 1px rgba(0,212,136,0.4), 0 14px 34px -10px rgba(0,212,136,0.65), 0 0 40px -8px rgba(0,212,136,0.5);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(0,212,136,0.5), 0 18px 40px -8px rgba(0,212,136,0.8), 0 0 55px -6px rgba(0,212,136,0.65);}
+  .btn-outline{background:rgba(255,255,255,0.02);color:var(--ink);border:1.5px solid var(--line-strong);}
+  .btn-outline:hover{border-color:var(--green);color:#7CF2B8;box-shadow:0 0 24px -8px rgba(0,212,136,0.5);}
+  .btn-outline.on-dark{color:#fff;border-color:var(--line-strong);}
+  .btn-outline.on-dark:hover{border-color:var(--green);color:#7CF2B8;}
+  .btn-white{background:#fff;color:var(--bg);}
+  .btn-white:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(255,255,255,0.35);}
+
+  /* glow orbs */
+  .glow-orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;}
+  .glow-green{background:radial-gradient(circle, rgba(0,212,136,0.55) 0%, transparent 70%);}
+  .glow-amber{background:radial-gradient(circle, rgba(255,178,62,0.4) 0%, transparent 70%);}
+
+  /* HEADER */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(4,13,9,0.75);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:var(--maxw);margin:0 auto;}
+  .nav-logo{display:flex;align-items:center;gap:10px;}
+  .nav-logo img{height:30px;width:auto;}
+  .nav-links{display:flex;gap:32px;font-size:14.5px;font-weight:500;color:var(--muted);}
+  .nav-links a:hover{color:#7CF2B8;}
+  .nav-cta{display:flex;gap:12px;align-items:center;}
+  .nav-cta .btn{padding:11px 24px;font-size:14px;}
+  @media(max-width:860px){ .nav-links{display:none;} }
+
+  /* HERO */
+  .hero{
+    padding:76px 0 56px;
+    overflow:hidden;
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgba(0,212,136,0.16) 0%, transparent 60%),
+      var(--bg);
+  }
+  .hero .glow-orb{width:520px;height:520px;top:-220px;left:50%;transform:translateX(-50%);}
+  .hero-inner{max-width:860px;margin:0 auto;text-align:center;}
+  .hero h1{font-size:50px;margin-bottom:22px;letter-spacing:-0.025em;}
+  .hero h1 .accent{
+    background:linear-gradient(90deg, #7CF2B8 0%, var(--green) 50%, var(--amber) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 26px rgba(0,212,136,0.45));
+  }
+  .hero p.sub{font-size:17.5px;color:var(--muted);max-width:640px;margin:0 auto 38px;}
+
+  /* VSL VIDEO PLAYER */
+  .vsl-wrap{
+    position:relative;max-width:800px;margin:0 auto 30px;
+    border-radius:20px;overflow:hidden;
+    aspect-ratio:16/9;background:#000;
+    box-shadow:0 0 0 1px var(--line-strong), 0 40px 90px -20px rgba(0,0,0,0.7), 0 0 80px -10px rgba(0,212,136,0.35);
+  }
+  .vsl-wrap video{width:100%;height:100%;object-fit:cover;display:block;background:#000;}
+  .vsl-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.75) saturate(1.05);}
+  .vsl-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(4,13,9,0.25) 0%, rgba(4,13,9,0.7) 100%);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;
+    cursor:pointer;transition:background .2s ease;
+  }
+  .vsl-overlay:hover{background:linear-gradient(180deg, rgba(4,13,9,0.35) 0%, rgba(4,13,9,0.78) 100%);}
+  .vsl-play{
+    width:82px;height:82px;border-radius:50%;
+    background:linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);color:#04150E;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 0 1px rgba(255,255,255,0.15), 0 0 60px -4px rgba(0,212,136,0.8);
+    transition:transform .18s ease;
+  }
+  .vsl-overlay:hover .vsl-play{transform:scale(1.08);}
+  .vsl-play svg{margin-left:4px;}
+  .vsl-caption{color:#fff;font-weight:600;font-size:15.5px;text-shadow:0 2px 14px rgba(0,0,0,0.6);}
+  .vsl-badge{
+    position:absolute;top:16px;left:16px;
+    background:rgba(0,0,0,0.55);color:#fff;font-size:11.5px;font-weight:600;
+    padding:5px 11px;border-radius:100px;backdrop-filter:blur(4px);
+    display:flex;align-items:center;gap:6px;border:1px solid var(--line-strong);
+  }
+  .vsl-badge .dot{width:6px;height:6px;border-radius:50%;background:#FF4D4D;box-shadow:0 0 8px #FF4D4D;}
+  .vsl-wrap.playing .vsl-overlay{display:none;}
+
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;}
+  .hero-trust{display:flex;align-items:center;justify-content:center;gap:10px;font-size:13.5px;color:var(--muted-2);}
+
+  /* PARTNERS STRIP */
+  .partners{padding:36px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg-1);}
+  .partners p{text-align:center;font-size:12.5px;color:var(--muted-2);font-weight:600;letter-spacing:.06em;margin-bottom:24px;text-transform:uppercase;}
+  .partner-row{display:flex;align-items:center;justify-content:center;gap:52px;flex-wrap:wrap;}
+  .partner-row img{height:32px;width:auto;filter:grayscale(100%) brightness(0) invert(1);opacity:0.55;}
+
+  /* GENERIC SECTION HEADING */
+  .sec-head{max-width:640px;margin-bottom:50px;}
+  .sec-head.center{margin-left:auto;margin-right:auto;text-align:center;}
+  .sec-head h2{font-size:36px;margin-bottom:16px;letter-spacing:-0.02em;}
+  .sec-head p{color:var(--muted);font-size:16px;}
+
+  section.pad{padding:96px 0;}
+  section.pad.tight{padding:80px 0;}
+
+  /* ABOUT / STORY */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+  @media(max-width:900px){.about-grid{grid-template-columns:1fr;}}
+  .about-grid p{color:var(--muted);margin-bottom:16px;font-size:15.5px;}
+  .about-grid strong{color:var(--ink);}
+  .about-photo{border-radius:20px;overflow:hidden;position:relative;box-shadow:0 30px 70px -20px rgba(0,0,0,0.6), 0 0 0 1px var(--line);}
+  .about-photo img{width:100%;height:100%;object-fit:cover;filter:saturate(1.05);}
+
+  /* PRODUCT CARDS */
+  .card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  @media(max-width:900px){.card-grid{grid-template-columns:1fr;}}
+  .prod-card{
+    background:linear-gradient(180deg, var(--surface) 0%, var(--bg-1) 100%);
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:34px 30px;transition:border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+  }
+  .prod-card:hover{border-color:rgba(0,212,136,0.5);transform:translateY(-4px);box-shadow:0 20px 50px -20px rgba(0,212,136,0.4);}
+  .prod-icon{
+    width:50px;height:50px;border-radius:13px;
+    background:rgba(0,212,136,0.1);border:1px solid rgba(0,212,136,0.25);
+    display:flex;align-items:center;justify-content:center;margin-bottom:22px;
+    font-size:22px;
+  }
+  .prod-card h3{font-size:19.5px;margin-bottom:10px;}
+  .prod-card p{color:var(--muted);font-size:14.5px;margin-bottom:20px;}
+  .prod-card a.link{color:#7CF2B8;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px;}
+
+  /* PATHWAY / STEPS */
+  .steps-wrap{background:transparent;}
+  .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  @media(max-width:760px){.steps-grid{grid-template-columns:1fr;}}
+  .step{background:var(--bg-1);padding:36px 30px;}
+  .step .num{font-family:'Outfit';font-weight:700;font-size:13.5px;color:var(--green);margin-bottom:16px;letter-spacing:.02em;}
+  .step h4{font-size:19px;margin-bottom:8px;}
+  .step p{color:var(--muted);font-size:14px;}
+
+  /* VEHICLE FINANCE GRID */
+  .veh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  @media(max-width:900px){.veh-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.veh-grid{grid-template-columns:1fr;}}
+  .veh-card{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface);transition:border-color .18s ease, transform .18s ease;}
+  .veh-card:hover{border-color:rgba(0,212,136,0.4);transform:translateY(-3px);}
+  .veh-card .veh-img{background:radial-gradient(80% 100% at 50% 100%, rgba(0,212,136,0.14) 0%, transparent 70%), var(--bg-1);height:154px;display:flex;align-items:center;justify-content:center;padding:16px;}
+  .veh-card .veh-img img{max-height:112px;object-fit:contain;filter:drop-shadow(0 10px 16px rgba(0,0,0,0.5));}
+  .veh-card .veh-body{padding:22px;}
+  .veh-card h4{font-size:15.5px;margin-bottom:6px;}
+  .veh-card p{font-size:13px;color:var(--muted);margin-bottom:14px;}
+  .veh-card a{font-size:13px;font-weight:600;color:#7CF2B8;}
+
+  /* DARK / TELEMETRY SECTION (now an elevated surface within the dark page) */
+  .dark-section{
+    background:radial-gradient(90% 120% at 20% 0%, rgba(255,178,62,0.08) 0%, transparent 55%), var(--bg-2);
+    color:#fff;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .dark-section .sec-head h2, .dark-section .sec-head p{color:#fff;}
+  .dark-section .sec-head p{color:var(--muted);}
+  .trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+  @media(max-width:900px){.trust-grid{grid-template-columns:repeat(2,1fr);}}
+  .trust-card h4{color:#fff;font-size:16.5px;margin-bottom:8px;}
+  .trust-card p{color:var(--muted);font-size:13.5px;}
+  .trust-card .num{font-family:'Outfit';font-weight:700;color:var(--amber);font-size:22px;margin-bottom:10px;display:block;}
+
+  .telemetry-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+  @media(max-width:900px){.telemetry-grid{grid-template-columns:1fr;}}
+  .telemetry-card{
+    background:rgba(255,255,255,0.03);border:1px solid var(--line-strong);border-radius:20px;padding:30px;
+    backdrop-filter:blur(6px);box-shadow:0 30px 60px -25px rgba(0,0,0,0.6);
+  }
+  .telemetry-card .live-tag{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:#7CF2B8;background:rgba(0,212,136,0.15);padding:5px 11px;border-radius:100px;margin-bottom:18px;letter-spacing:.03em;}
+  .telemetry-card .live-tag .dot{width:6px;height:6px;border-radius:50%;background:#3CE08B;box-shadow:0 0 8px #3CE08B;}
+  .telemetry-stat{display:flex;justify-content:space-between;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--line);}
+  .telemetry-stat:last-child{border-bottom:none;}
+  .telemetry-stat .label{font-size:13.5px;color:var(--muted);}
+  .telemetry-stat .value{font-family:'Outfit';font-weight:700;font-size:21px;color:#fff;}
+  .telemetry-list li{list-style:none;color:var(--muted);font-size:14.5px;margin-bottom:15px;padding-left:28px;position:relative;}
+  .telemetry-list li:before{content:"";position:absolute;left:0;top:5px;width:15px;height:15px;border-radius:50%;background:rgba(0,212,136,0.2);border:2px solid var(--green);box-shadow:0 0 10px rgba(0,212,136,0.4);}
+
+  /* PRINCIPLES */
+  .principle-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  @media(max-width:900px){.principle-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:560px){.principle-grid{grid-template-columns:1fr;}}
+  .principle{padding:28px 0;border-top:1px solid var(--line);}
+  .principle h4{font-size:17px;margin-bottom:8px;}
+  .principle p{font-size:14px;color:var(--muted);}
+
+  /* SAVINGS */
+  .savings-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:760px){.savings-grid{grid-template-columns:1fr;}}
+  .save-card{border:1px solid var(--line);border-radius:var(--radius);padding:38px;background:var(--surface);}
+  .save-card.featured{
+    background:linear-gradient(160deg, var(--surface-2) 0%, var(--bg-2) 100%);
+    border-color:rgba(0,212,136,0.35);
+    box-shadow:0 0 60px -18px rgba(0,212,136,0.35);
+  }
+  .save-card.featured p, .save-card.featured li{color:var(--muted);}
+  .save-card.featured h3{color:#fff;}
+  .save-tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.03em;color:#7CF2B8;background:rgba(0,212,136,0.12);border:1px solid rgba(0,212,136,0.25);padding:5px 12px;border-radius:100px;margin-bottom:20px;}
+  .save-card.featured .save-tag{background:rgba(255,178,62,0.12);color:var(--amber);border-color:rgba(255,178,62,0.3);}
+  .save-card h3{font-size:23px;margin-bottom:12px;}
+  .save-card p{color:var(--muted);font-size:14.5px;margin-bottom:22px;}
+  .save-list{list-style:none;margin-bottom:28px;}
+  .save-list li{font-size:14px;color:var(--muted);padding:9px 0 9px 26px;position:relative;border-top:1px solid var(--line);}
+  .save-list li:first-child{border-top:none;}
+  .save-list li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:700;}
+
+  /* TESTIMONIALS - EMPTY STATE */
+  .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  @media(max-width:900px){.testi-grid{grid-template-columns:1fr;}}
+  .testi-card{
+    border:1.5px dashed var(--line-strong);border-radius:var(--radius);
+    padding:34px 30px;background:var(--bg-1);
+    min-height:200px;display:flex;flex-direction:column;justify-content:space-between;
+  }
+  .testi-quote{color:var(--muted-2);font-size:14.5px;font-style:italic;}
+  .testi-who{display:flex;align-items:center;gap:12px;margin-top:24px;}
+  .testi-avatar{width:42px;height:42px;border-radius:50%;background:var(--surface);border:1.5px dashed var(--muted-2);}
+  .testi-name{font-size:14px;font-weight:600;color:var(--muted);}
+  .testi-role{font-size:12.5px;color:var(--muted-2);}
+
+  /* FAQ */
+  .faq-item{border-top:1px solid var(--line);padding:24px 0;cursor:pointer;}
+  .faq-item:last-child{border-bottom:1px solid var(--line);}
+  .faq-q{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:16.5px;gap:20px;color:var(--ink);}
+  .faq-q .icon{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line-strong);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--green);transition:transform .2s ease;}
+  .faq-item.open .faq-q .icon{transform:rotate(45deg);border-color:var(--green);box-shadow:0 0 12px rgba(0,212,136,0.4);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .faq-item.open .faq-a{max-height:200px;}
+  .faq-a p{padding-top:14px;color:var(--muted);font-size:14.5px;max-width:680px;}
+
+  /* LEAD FORM */
+  .lead-section{
+    background:
+      radial-gradient(60% 60% at 80% 20%, rgba(255,178,62,0.14) 0%, transparent 60%),
+      radial-gradient(50% 60% at 10% 80%, rgba(0,212,136,0.16) 0%, transparent 60%),
+      var(--bg-2);
+    color:#fff;border-top:1px solid var(--line);
+  }
+  .lead-grid{display:grid;grid-template-columns:1fr 0.9fr;gap:60px;align-items:center;}
+  @media(max-width:900px){.lead-grid{grid-template-columns:1fr;}}
+  .lead-grid h2{color:#fff;font-size:34px;margin-bottom:18px;}
+  .lead-grid p{color:var(--muted);font-size:15.5px;margin-bottom:24px;}
+  .lead-points li{list-style:none;color:rgba(255,255,255,0.82);font-size:14.5px;padding:9px 0 9px 26px;position:relative;}
+  .lead-points li:before{content:"✓";position:absolute;left:0;color:var(--amber);font-weight:700;}
+  .lead-form{
+    background:#fff;border-radius:22px;padding:38px;color:#0B1F17;
+    box-shadow:0 40px 90px -20px rgba(0,0,0,0.6), 0 0 70px -15px rgba(0,212,136,0.35);
+  }
+  .lead-form h3{font-size:21px;margin-bottom:6px;color:#0B1F17;}
+  .lead-form .sub{font-size:13.5px;color:#5B6B63;margin-bottom:26px;}
+  .field{margin-bottom:17px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:7px;color:#0B1F17;}
+  .field input{
+    width:100%;padding:14px 15px;border-radius:11px;border:1.5px solid #E4EAE6;
+    font-family:'Inter';font-size:14.5px;background:#FAFBFA;color:#0B1F17;
+  }
+  .field input:focus{outline:none;border-color:var(--green-deep);background:#fff;}
+  .phone-row{display:flex;gap:8px;}
+  .phone-row select{border-radius:11px;border:1.5px solid #E4EAE6;padding:0 10px;font-size:14px;background:#FAFBFA;color:#0B1F17;}
+  .lead-form .btn{width:100%;margin-top:8px;padding:16px;font-size:15.5px;}
+  .lead-form .fine{font-size:12px;color:#8FA097;text-align:center;margin-top:16px;}
+
+  /* FOOTER */
+  footer{background:var(--bg-1);color:var(--muted);padding:70px 0 30px;border-top:1px solid var(--line);}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:50px;}
+  @media(max-width:760px){.foot-grid{grid-template-columns:1fr 1fr;}}
+  .foot-grid img{height:26px;margin-bottom:18px;}
+  .foot-grid p{font-size:13.5px;line-height:1.65;max-width:280px;color:var(--muted-2);}
+  .foot-col h5{color:#fff;font-size:12.5px;margin-bottom:18px;letter-spacing:.06em;}
+  .foot-col a{display:block;font-size:13.5px;margin-bottom:12px;color:var(--muted);}
+  .foot-col a:hover{color:#7CF2B8;}
+  .foot-bottom{border-top:1px solid var(--line);padding-top:26px;font-size:12.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:var(--muted-2);}
+
+  .sticky-cta{
+    position:fixed;bottom:0;left:0;right:0;z-index:60;
+    background:rgba(6,20,14,0.92);backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+    padding:12px 20px;display:none;align-items:center;justify-content:space-between;gap:14px;
+  }
+  .sticky-cta span{font-size:14px;font-weight:600;color:#fff;}
+  @media(max-width:760px){ .sticky-cta{display:flex;} body{padding-bottom:76px;} }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="#" class="nav-logo"><img src="assets/logo-white.png" alt="CirclesFundMe"></a>
+    <nav class="nav-links">
+      <a href="#how-it-works">How It Works</a>
+      <a href="#mobility">Mobility Finance</a>
+      <a href="#savings">Savings</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#apply" class="btn btn-primary">Apply Now</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="glow-orb glow-green"></div>
+  <div class="wrap hero-inner">
+    <span class="eyebrow">For Commercial Drivers</span>
+    <h1>Dear Commercial Driver: What If You Could <span class="accent">Own Your Vehicle</span> Without Buying It First?</h1>
+    <p class="sub">CirclesFundMe helps you save steadily and use a simple payment plan to own your own vehicle. No more driving someone else's car or bus forever. Start saving now and work toward owning your ride.</p>
+
+    <!-- VSL VIDEO — replace the <source src> below with your hosted video file or embed URL -->
+    <div class="vsl-wrap" id="vslWrap">
+      <span class="vsl-badge"><span class="dot"></span> WATCH FIRST</span>
+      <img class="vsl-poster" src="assets/bus.png" alt="CirclesFundMe video thumbnail" style="object-position:center 30%;background:#0E2A1E;">
+      <video id="vslVideo" playsinline preload="none">
+        <source src="assets/your-vsl-video.mp4" type="video/mp4">
+      </video>
+      <div class="vsl-overlay" id="vslOverlay">
+        <div class="vsl-play">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span class="vsl-caption">Watch: How Commercial Drivers Are Owning Their Vehicles</span>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <a href="#apply" class="btn btn-primary">Start Your Savings Plan</a>
+      <a href="#how-it-works" class="btn btn-outline">See How It Works</a>
+    </div>
+    <div class="hero-trust">
+      <span>Drivers and riders trust us. Real banks and financial partners back us too.</span>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="partners">
+  <div class="wrap">
+    <p>Backed by trusted financial partners</p>
+    <div class="partner-row">
+      <img src="assets/partner-1.png" alt="Partner institution">
+      <img src="assets/partner-2.png" alt="Partner institution">
+      <img src="assets/partner-3.png" alt="Partner institution">
+      <img src="assets/partner-4.png" alt="Partner institution">
+      <img src="assets/partner-5.png" alt="Partner institution">
+      <img src="assets/partner-6.png" alt="Partner institution">
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / POSITIONING -->
+<section class="pad">
+  <div class="wrap about-grid">
+    <div class="about-photo"><img src="assets/lockup.jpg" alt="Driver building savings with CirclesFundMe"></div>
+    <div>
+      <span class="eyebrow">About CirclesFundMe</span>
+      <h2 style="font-size:32px;margin-bottom:18px;">A Different Path to Owning the Vehicle You Drive</h2>
+      <p>CirclesFundMe is an app that helps you save money, build good credit, and get financing for a vehicle. We help drivers move from renting a vehicle to owning one.</p>
+      <p>Our main focus is <strong>Mobility Finance</strong>. We help drivers save for and finance the tricycles, buses, and vehicles they use to earn money. Pick a weekly or monthly savings plan that fits your income. Build a strong savings record. Then unlock a payment plan to get the vehicle you need.</p>
+      <a href="#apply" class="btn btn-primary" style="margin-top:8px;">Become A Vehicle Owner</a>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="pad tight" style="background:var(--bg-1);" id="mobility">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">One App. Many Ways to Grow</span>
+      <h2>Financial Products Built for Commercial Drivers</h2>
+      <p>Whether you drive a keke, a bus, or run a small fleet, we have savings and loan tools built for you.</p>
+    </div>
+    <div class="card-grid">
+      <div class="prod-card">
+        <div class="prod-icon">🚐</div>
+        <h3>Mobility Finance</h3>
+        <p>Get financing for tricycles, buses, and other work vehicles. Fast approval. Easy payment plans based on how much you earn.</p>
+        <a href="#" class="link">Learn More →</a>
+      </div>
+      <div class="prod-card">
+        <div class="prod-icon">📈</div>
+        <h3>SME Finance</h3>
+        <p>Get a loan based on your business and income. Use it for stock, spare parts, or equipment.</p>
+        <a href="#" class="link">Learn More →</a>
+      </div>
+      <div class="prod-card">
+        <div class="prod-icon">💰</div>
+        <h3 id="savings">Savings</h3>
+        <p>Save money your way — flexible or locked. Save alone or with your group.</p>
+        <a href="#" class="link">Learn More →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="pad" id="how-it-works">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">The Pathway</span>
+      <h2>How CirclesFundMe Works</h2>
+      <p>A clear, simple path from saving money to owning your vehicle.</p>
+    </div>
+  </div>
+  <div class="wrap steps-wrap" style="background:transparent;">
+    <div class="steps-grid">
+      <div class="step"><div class="num">01 — Join</div><h4>Join</h4><p>Sign up on your own, or join with your savings group.</p></div>
+      <div class="step"><div class="num">02 — Contribute</div><h4>Contribute</h4><p>Save often to build a strong savings record.</p></div>
+      <div class="step"><div class="num">03 — Qualify</div><h4>Qualify</h4><p>Your savings record unlocks a payment plan made for you.</p></div>
+      <div class="step"><div class="num">04 — Finance</div><h4>Finance</h4><p>Get the tricycle, bus, or vehicle you need to earn money.</p></div>
+      <div class="step"><div class="num">05 — Repay</div><h4>Repay</h4><p>Pay it back a little at a time, matched to your daily earnings.</p></div>
+      <div class="step"><div class="num">06 — Grow</div><h4>Own &amp; Grow</h4><p>Own your vehicle fully. Then qualify for an even bigger loan next time.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- VEHICLE TYPES -->
+<section class="pad tight" style="background:var(--bg-1);">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Mobility Finance</span>
+      <h2>Get the Vehicle That Grows Your Business</h2>
+      <p>Simple payment plans for the work vehicles that earn you money.</p>
+    </div>
+    <div class="veh-grid">
+      <div class="veh-card">
+        <div class="veh-img"><img src="assets/tricycle.png" alt="Tricycle finance"></div>
+        <div class="veh-body"><h4>Tricycle Finance</h4><p>Own a tricycle. Start earning more.</p><a href="#apply">Learn More →</a></div>
+      </div>
+      <div class="veh-card">
+        <div class="veh-img"><img src="assets/sedan-1.png" alt="Commercial auto finance"></div>
+        <div class="veh-body"><h4>Commercial Auto Finance</h4><p>Finance a car for your business.</p><a href="#apply">Learn More →</a></div>
+      </div>
+      <div class="veh-card">
+        <div class="veh-img"><img src="assets/bus.png" alt="Bus finance"></div>
+        <div class="veh-body"><h4>Bus Finance</h4><p>Get a bus loan for your transport business.</p><a href="#apply">Learn More →</a></div>
+      </div>
+      <div class="veh-card">
+        <div class="veh-img"><img src="assets/heavy-duty.png" alt="Heavy duty finance"></div>
+        <div class="veh-body"><h4>Heavy Duty Finance</h4><p>Get a loan for big trucks that haul goods.</p><a href="#apply">Learn More →</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COOPERATIVE TRUST -->
+<section class="pad">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">The Power of Trust</span>
+      <h2>People You Know. Finance You Can Build Together.</h2>
+      <p>When you save with people you trust, you don't need strict collateral. Your group backs you up.</p>
+    </div>
+    <div class="principle-grid">
+      <div class="principle"><h4>Trust</h4><p>Use the trust you already have with your group, instead of strict collateral rules.</p></div>
+      <div class="principle"><h4>Accountability</h4><p>Your group helps you stay on track with payments.</p></div>
+      <div class="principle"><h4>Community</h4><p>Grow your savings together, and help local business grow too.</p></div>
+      <div class="principle"><h4>Additional Credit Support</h4><p>Group support can help you qualify for bigger loans.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TELEMETRY / DARK SECTION -->
+<section class="pad dark-section">
+  <div class="wrap telemetry-grid">
+    <div>
+      <span class="eyebrow on-dark">Live Tracking</span>
+      <h2 style="font-size:32px;margin-bottom:16px;">We Don't Just Finance the Vehicle. We Help You Run It Smarter.</h2>
+      <p style="color:rgba(255,255,255,0.65);font-size:15.5px;margin-bottom:24px;">We track how your vehicle is used. This helps you earn more each day.</p>
+      <ul class="telemetry-list">
+        <li>8 hours of daily use, tracked to keep your vehicle running longer</li>
+        <li>Route tips to help you find better-paying trips</li>
+        <li>Payments that adjust to how much you actually earn</li>
+      </ul>
+    </div>
+    <div class="telemetry-card">
+      <span class="live-tag"><span class="dot"></span> LIVE SYSTEM</span>
+      <div class="telemetry-stat"><span class="label">Daily Operating Hours</span><span class="value">8.4 hrs</span></div>
+      <div class="telemetry-stat"><span class="label">Earning Potential</span><span class="value">94%</span></div>
+      <div class="telemetry-stat"><span class="label">Payment Score</span><span class="value">87 / 100</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESPONSIBLE LENDING -->
+<section class="pad tight">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Responsible Lending</span>
+      <h2>Our Principles for Financial Health</h2>
+      <p>We believe loans should help you build wealth, not debt. Here are the six rules we follow.</p>
+    </div>
+    <div class="principle-grid">
+      <div class="principle"><h4>Contribution History</h4><p>Steady saving over time shows us you're ready.</p></div>
+      <div class="principle"><h4>Affordability First</h4><p>We make sure your payments always fit your income.</p></div>
+      <div class="principle"><h4>Revenue Verification</h4><p>We check your real earnings to see what you can afford.</p></div>
+      <div class="principle"><h4>Asset Utilization</h4><p>We only finance vehicles that help you earn money.</p></div>
+      <div class="principle"><h4>Group Guarantee</h4><p>Your group helps keep everyone on track with payments.</p></div>
+      <div class="principle"><h4>Automated Collections</h4><p>Easy, automatic payments that fit your income schedule.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SAVINGS PLANS -->
+<section class="pad tight" style="background:var(--bg-1);">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Grow Together</span>
+      <h2>Save Faster Toward Owning Your Vehicle</h2>
+      <p>Need quick access to cash, or a longer-term plan? We have a savings option for you.</p>
+    </div>
+    <div class="savings-grid">
+      <div class="save-card">
+        <span class="save-tag">EASY ACCESS</span>
+        <h3>Flex Savings</h3>
+        <p>Great for daily and weekly savers. Save at your own pace. Check your balance anytime. Take out cash when you need it.</p>
+        <ul class="save-list">
+          <li>Save any amount, anytime</li>
+          <li>See your balance anytime</li>
+          <li>Easy group withdrawals</li>
+        </ul>
+        <a href="#apply" class="btn btn-outline">Open Flex Savings</a>
+      </div>
+      <div class="save-card featured">
+        <span class="save-tag">SAVE FASTER</span>
+        <h3>Lock-Up Savings</h3>
+        <p>Lock your savings for a set time. Great if you're saving for one vehicle by a set date.</p>
+        <ul class="save-list">
+          <li>Choose how long to save</li>
+          <li>Earn more on your savings</li>
+          <li>Your money is safe until it matures</li>
+        </ul>
+        <a href="#apply" class="btn btn-white">Open Lock-Up Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS (LEFT EMPTY) -->
+<section class="pad">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Customer Stories</span>
+      <h2>Financing Real Growth</h2>
+      <p>Hear from drivers and groups working to own their vehicles.</p>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <p class="testi-quote">[ Testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-quote">[ Testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-quote">[ Testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="pad tight" style="background:var(--bg-1);" id="faq">
+  <div class="wrap" style="max-width:820px;">
+    <div class="sec-head">
+      <span class="eyebrow">Frequently Asked Questions</span>
+      <h2>Got Questions? We've Got Answers</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-q">Is the program suitable for women? <span class="icon">+</span></div>
+        <div class="faq-a"><p>Yes! CirclesFundMe is open to any driver ready to save regularly. It doesn't matter if you're a man or a woman.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How long before I qualify for financing? <span class="icon">+</span></div>
+        <div class="faq-a"><p>It depends on how much and how often you save. Many members qualify after just a few months of steady saving.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do I need to be part of a trust group to join? <span class="icon">+</span></div>
+        <div class="faq-a"><p>No. You can join alone or with a group. Joining with a group can help you qualify for a bigger loan.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What vehicles can I finance? <span class="icon">+</span></div>
+        <div class="faq-a"><p>Tricycles, buses, cars, and big trucks — as long as you use them to earn money.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">I don't have collateral. Is that okay? <span class="icon">+</span></div>
+        <div class="faq-a"><p>No problem. Instead of collateral, we look at your savings record, your income, and your group's support.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEAD FORM -->
+<section class="pad lead-section" id="apply">
+  <div class="wrap lead-grid">
+    <div>
+      <span class="eyebrow on-dark">Get One Step Closer</span>
+      <h2>Start Your Savings Plan Today</h2>
+      <p>Fill in your details below. We'll reach out with next steps and add you to our WhatsApp group for updates and support.</p>
+      <ul class="lead-points">
+        <li>No strict collateral needed</li>
+        <li>Weekly or monthly plans that fit your income</li>
+        <li>A clear path to owning your vehicle</li>
+      </ul>
+    </div>
+    <form class="lead-form" id="leadForm">
+      <h3>Join CirclesFundMe</h3>
+      <p class="sub">It takes less than a minute.</p>
+      <div class="field">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" name="fullName" placeholder="e.g. Musa Ibrahim" required>
+      </div>
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label for="whatsapp">WhatsApp Phone Number</label>
+        <div class="phone-row">
+          <select name="countryCode" aria-label="Country code">
+            <option value="+234">🇳🇬 +234</option>
+            <option value="+233">🇬🇭 +233</option>
+            <option value="+254">🇰🇪 +254</option>
+            <option value="+27">🇿🇦 +27</option>
+          </select>
+          <input type="tel" id="whatsapp" name="whatsapp" placeholder="801 234 5678" required style="flex:1;">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Get Started Free</button>
+      <p class="fine">We'll never spam you. Your details are safe with us.</p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img src="assets/logo-white.png" alt="CirclesFundMe">
+        <p>An app that helps you save money, build credit, and finance a vehicle. Built for commercial drivers.</p>
+      </div>
+      <div class="foot-col">
+        <h5>ABOUT US</h5>
+        <a href="#">Our Mission</a>
+        <a href="#">Impact</a>
+      </div>
+      <div class="foot-col">
+        <h5>PRODUCTS</h5>
+        <a href="#mobility">Mobility Finance</a>
+        <a href="#">SME Finance</a>
+        <a href="#savings">Savings Plans</a>
+      </div>
+      <div class="foot-col">
+        <h5>LEGAL</h5>
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#faq">FAQs</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 CirclesFundMe Ltd. All rights reserved.</span>
+      <span>CirclesFundMe is a financial technology company. Vehicle loans depend on a credit check.</span>
+    </div>
+  </div>
+</footer>
+
+<div class="sticky-cta">
+  <span>Ready to own your vehicle?</span>
+  <a href="#apply" class="btn btn-primary">Apply Now</a>
+</div>
+
+<script>
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    item.querySelector('.faq-q').addEventListener('click', ()=>{
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+      if(!isOpen) item.classList.add('open');
+    });
+  });
+
+  // VSL video: click poster to play
+  const vslWrap = document.getElementById('vslWrap');
+  const vslVideo = document.getElementById('vslVideo');
+  const vslOverlay = document.getElementById('vslOverlay');
+  vslOverlay.addEventListener('click', ()=>{
+    vslWrap.classList.add('playing');
+    vslVideo.setAttribute('controls', 'true');
+    vslVideo.play().catch(()=>{ /* swap in a real video source to enable playback */ });
+  });
+
+  document.getElementById('leadForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    // TODO: wire this up to your form backend / CRM / email automation.
+    // On success, redirect to the thank-you page:
+    window.location.href = 'thank-you.html';
+  });
+</script>
+
+</body>
+</html>
