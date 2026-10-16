@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CirclesFundMe — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#00A86B; --green-deep:#0E2A1E; --amber:#F5A623;
+    --bg:#0A0F0C; --surface:#121B16; --surface-2:#19241D;
+    --line:#223229; --ink:#EDF5F0; --muted:#8FA397; --white:#fff;
+    --danger:#E5484D;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+  h1,h2,h3{font-family:'Outfit',system-ui,sans-serif;}
+  a{color:inherit;}
+  button{font-family:'Inter',sans-serif;cursor:pointer;}
+  input,select,textarea{font-family:'Inter',sans-serif;}
+
+  /* ---- LOGIN SCREEN ---- */
+  #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .login-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:36px;}
+  .login-card h1{font-size:22px;margin-bottom:6px;}
+  .login-card p{font-size:13.5px;color:var(--muted);margin-bottom:24px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+  .field input, .field select, .field textarea{
+    width:100%;padding:11px 13px;border-radius:9px;border:1px solid var(--line);
+    background:var(--surface-2);color:var(--ink);font-size:14px;
+  }
+  .field textarea{resize:vertical;min-height:70px;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 20px;border-radius:9px;border:none;font-weight:600;font-size:14px;}
+  .btn-primary{background:var(--green);color:#04150E;width:100%;}
+  .btn-outline{background:transparent;border:1px solid var(--line);color:var(--ink);}
+  .btn-danger{background:rgba(229,72,77,0.12);color:var(--danger);border:1px solid rgba(229,72,77,0.35);}
+  .btn-sm{padding:7px 13px;font-size:12.5px;}
+  .err-msg{color:var(--danger);font-size:13px;margin-top:10px;display:none;}
+  .config-warning{
+    background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.35);color:var(--amber);
+    font-size:12.5px;padding:10px 14px;border-radius:9px;margin-bottom:18px;line-height:1.5;
+  }
+
+  /* ---- APP SHELL ---- */
+  #app{display:none;min-height:100vh;grid-template-columns:220px 1fr;}
+  #app.show{display:grid;}
+  aside{background:var(--surface);border-right:1px solid var(--line);padding:22px 14px;position:sticky;top:0;height:100vh;}
+  aside .logo{font-weight:800;font-size:17px;margin-bottom:28px;padding:0 10px;}
+  aside nav a{
+    display:block;padding:10px 12px;border-radius:9px;font-size:13.5px;font-weight:600;
+    color:var(--muted);margin-bottom:4px;cursor:pointer;
+  }
+  aside nav a.active, aside nav a:hover{background:var(--surface-2);color:#fff;}
+  aside .signout{position:absolute;bottom:22px;left:14px;right:14px;}
+  main{padding:32px 36px;max-width:1040px;}
+  main h2{font-size:22px;margin-bottom:4px;}
+  main .sub{color:var(--muted);font-size:13.5px;margin-bottom:26px;}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{background:var(--surface-2);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  tr:last-child td{border-bottom:none;}
+  td .tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:100px;}
+  .tag.yes{background:rgba(0,168,107,0.15);color:#5CDB9C;}
+  .tag.no{background:rgba(255,255,255,0.06);color:var(--muted);}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px;}
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;}
+  .card-head h4{font-size:15px;}
+  .card-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .add-form{background:var(--surface-2);border:1px dashed var(--line);border-radius:12px;padding:20px;margin-top:20px;}
+  .add-form h4{font-size:14px;margin-bottom:14px;}
+  .toggle-inline{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:4px;}
+  .empty-note{color:var(--muted);font-size:13.5px;padding:20px;text-align:center;}
+  .toast-msg{
+    position:fixed;top:18px;right:18px;background:var(--surface);border:1px solid var(--line);
+    padding:12px 18px;border-radius:9px;font-size:13.5px;z-index:99;display:none;
+  }
+  @media(max-width:800px){
+    #app.show{display:block;}
+    aside{position:static;height:auto;padding-bottom:16px;}
+    aside .signout{position:static;margin-top:16px;}
+    main{padding:24px 18px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <h1>CirclesFundMe Admin</h1>
+    <p>Sign in to manage signups, testimonials, FAQs and more.</p>
+    <div class="config-warning" id="configWarning">
+      Supabase isn't configured yet. Fill in <code>assets/config.js</code> with your project URL and anon key, then run <code>supabase-schema.sql</code> in your Supabase SQL editor. See SETUP.md.
+    </div>
+    <form id="loginForm">
+      <div class="field">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" required>
+      </div>
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" required>
+      </div>
+      <button type="submit" class="btn btn-primary" id="loginBtn">Sign In</button>
+      <p class="err-msg" id="loginErr"></p>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <aside>
+    <div class="logo">CirclesFundMe</div>
+    <nav>
+      <a data-panel="signups" class="active">Signups</a>
+      <a data-panel="testimonials">Testimonials</a>
+      <a data-panel="faqs">FAQs</a>
+      <a data-panel="partners">Partners</a>
+      <a data-panel="vehicles">Vehicle Types</a>
+      <a data-panel="settings">Site Settings</a>
+    </nav>
+    <div class="signout"><button class="btn btn-outline" id="signOutBtn" style="width:100%;">Sign Out</button></div>
+  </aside>
+
+  <main>
+    <!-- SIGNUPS -->
+    <section class="panel active" id="panel-signups">
+      <h2>Signups</h2>
+      <p class="sub">Everyone who has filled in the form. Mark someone "verified" to let their name show in the live "just joined" popup on the public site.</p>
+      <div id="signupsTableWrap"><p class="empty-note">Loading…</p></div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="panel" id="panel-testimonials">
+      <h2>Testimonials</h2>
+      <p class="sub">Control exactly what shows in the "Real Words From Real Members" strip and the video testimonials below it.</p>
+      <div class="card">
+        <div class="card-head">
+          <h4>Show the testimonials section at all?</h4>
+          <label class="toggle-inline"><input type="checkbox" id="showTestimonialsToggle"> <span>Visible on site</span></label>
+        </div>
+        <p style="font-size:12.5px;color:var(--muted);">Turn this off to hide the whole "What Drivers Say" section from the public site, without deleting any testimonials below.</p>
+      </div>
+      <div id="testimonialsList"><p class="empty-note">Loading…</p></div>
+      <div class="add-form">
+        <h4>Add a testimonial</h4>
+        <div class="row-2">
+          <div class="field"><label>Name</label><input type="text" id="tName" placeholder="e.g. Musa Ibrahim"></div>
+          <div class="field"><label>Role / vehicle type</label><input type="text" id="tRole" placeholder="e.g. Tricycle Owner, Lagos"></div>
+        </div>
+        <div class="field"><label>Kind</label>
+          <select id="tKind"><option value="text">Text quote</option><option value="video">Video</option></select>
+        </div>
+        <div class="field" id="tQuoteField"><label>Quote</label><textarea id="tQuote" placeholder="What they said"></textarea></div>
+        <div class="row-2" id="tVideoFields" style="display:none;">
+          <div class="field"><label>Video URL</label><input type="text" id="tVideoUrl" placeholder="https://..."></div>
+          <div class="field"><label>Poster / thumbnail URL</label><input type="text" id="tPosterUrl" placeholder="https://..."></div>
+        </div>
+        <div class="field"><label>Rating (1-5)</label><input type="number" id="tRating" min="1" max="5" value="5"></div>
+        <button class="btn btn-primary" id="addTestimonialBtn" style="width:auto;">Add Testimonial</button>
+      </div>
+    </section>
+
+    <!-- FAQS -->
+    <section class="panel" id="panel-faqs">
+      <h2>FAQs</h2>
+      <p class="sub">These appear in order on the public site's FAQ section.</p>
+      <div id="faqsList"><p class="empty-note">Loading…</p></div>
+      <div class="add-form">
+        <h4>Add an FAQ</h4>
+        <div class="field"><label>Question</label><input type="text" id="fqQuestion"></div>
+        <div class="field"><label>Answer</label><textarea id="fqAnswer"></textarea></div>
+        <div class="field"><label>Sort order (lower shows first)</label><input type="number" id="fqSort" value="0"></div>
+        <button class="btn btn-primary" id="addFaqBtn" style="width:auto;">Add FAQ</button>
+      </div>
+    </section>
+
+    <!-- PARTNERS -->
+    <section class="panel" id="panel-partners">
+      <h2>Partners</h2>
+      <p class="sub">Logos shown in the "Backed by trusted financial partners" strip.</p>
+      <div id="partnersList"><p class="empty-note">Loading…</p></div>
+      <div class="add-form">
+        <h4>Add a partner</h4>
+        <div class="row-2">
+          <div class="field"><label>Name</label><input type="text" id="pName"></div>
+          <div class="field"><label>Logo URL</label><input type="text" id="pLogo" placeholder="https://..."></div>
+        </div>
+        <div class="field"><label>Sort order</label><input type="number" id="pSort" value="0"></div>
+        <button class="btn btn-primary" id="addPartnerBtn" style="width:auto;">Add Partner</button>
+      </div>
+    </section>
+
+    <!-- VEHICLE TYPES -->
+    <section class="panel" id="panel-vehicles">
+      <h2>Vehicle Types</h2>
+      <p class="sub">Options shown in the "What vehicle do you want?" dropdown on the signup form.</p>
+      <div id="vehiclesList"><p class="empty-note">Loading…</p></div>
+      <div class="add-form">
+        <h4>Add a vehicle type</h4>
+        <div class="field"><label>Label</label><input type="text" id="vLabel" placeholder="e.g. Minibus"></div>
+        <div class="field"><label>Sort order</label><input type="number" id="vSort" value="0"></div>
+        <button class="btn btn-primary" id="addVehicleBtn" style="width:auto;">Add Vehicle Type</button>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="panel" id="panel-settings">
+      <h2>Site Settings</h2>
+      <p class="sub">The video thumbnail, the VSL video itself, and your WhatsApp invite link.</p>
+      <div class="card">
+        <div class="field"><label>Hero video thumbnail (poster) URL</label><input type="text" id="setPoster" placeholder="https://... or assets/your-image.jpg"></div>
+        <div class="field"><label>Hero video file URL</label><input type="text" id="setVideoSrc" placeholder="https://... or assets/your-video.mp4"></div>
+        <div class="field"><label>WhatsApp community link</label><input type="text" id="setWhatsapp" placeholder="https://chat.whatsapp.com/..."></div>
+        <button class="btn btn-primary" id="saveSettingsBtn" style="width:auto;">Save Settings</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast-msg" id="toastMsg"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/config.js"></script>
+<script>
+  const sb = (typeof SUPABASE_CONFIGURED !== 'undefined' && SUPABASE_CONFIGURED && typeof supabase !== 'undefined')
+    ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
+  if (sb) document.getElementById('configWarning').style.display = 'none';
+
+  function toast(msg) {
+    const t = document.getElementById('toastMsg');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 2600);
+  }
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  }
+
+  // ---------- AUTH ----------
+  async function checkSession() {
+    if (!sb) return;
+    const { data } = await sb.auth.getSession();
+    if (data && data.session) showApp();
+  }
+  function showApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    loadAllPanels();
+  }
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('loginErr');
+    errEl.style.display = 'none';
+    if (!sb) { errEl.textContent = 'Supabase is not configured yet — see assets/config.js.'; errEl.style.display = 'block'; return; }
+    const btn = document.getElementById('loginBtn');
+    btn.textContent = 'Signing in…'; btn.disabled = true;
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    btn.textContent = 'Sign In'; btn.disabled = false;
+    if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+    showApp();
+  });
+  document.getElementById('signOutBtn').addEventListener('click', async () => {
+    if (sb) await sb.auth.signOut();
+    location.reload();
+  });
+  checkSession();
+
+  // ---------- NAV ----------
+  document.querySelectorAll('aside nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelectorAll('aside nav a').forEach(a => a.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      link.classList.add('active');
+      document.getElementById('panel-' + link.dataset.panel).classList.add('active');
+    });
+  });
+
+  function loadAllPanels() {
+    loadSignups();
+    loadTestimonialsAdmin();
+    loadFaqsAdmin();
+    loadPartnersAdmin();
+    loadVehiclesAdmin();
+    loadSettingsAdmin();
+  }
+
+  // ---------- SIGNUPS ----------
+  async function loadSignups() {
+    const wrap = document.getElementById('signupsTableWrap');
+    if (!sb) { wrap.innerHTML = '<p class="empty-note">Connect Supabase to see signups.</p>'; return; }
+    const { data, error } = await sb.from('signups').select('*').order('created_at', { ascending: false }).limit(200);
+    if (error) { wrap.innerHTML = `<p class="empty-note">Could not load signups: ${escapeHtml(error.message)}</p>`; return; }
+    if (!data || !data.length) { wrap.innerHTML = '<p class="empty-note">No signups yet.</p>'; return; }
+    wrap.innerHTML = `
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>WhatsApp</th><th>Vehicle</th><th>CNG</th><th>Ambassador</th><th>Verified</th><th>Joined</th></tr></thead>
+        <tbody>${data.map(s => `
+          <tr>
+            <td>${escapeHtml(s.full_name)}</td>
+            <td>${escapeHtml(s.email)}</td>
+            <td>${escapeHtml(s.whatsapp)}</td>
+            <td>${escapeHtml(s.vehicle_type || '')}${s.vehicle_type_other ? ' — ' + escapeHtml(s.vehicle_type_other) : ''}</td>
+            <td>${s.wants_cng ? '<span class="tag yes">Yes</span>' : '<span class="tag no">No</span>'}</td>
+            <td>${s.wants_ambassador ? '<span class="tag yes">Yes</span>' : '<span class="tag no">No</span>'}</td>
+            <td><label class="toggle-inline"><input type="checkbox" data-id="${s.id}" class="verifyToggle" ${s.verified ? 'checked' : ''}></label></td>
+            <td>${new Date(s.created_at).toLocaleDateString()}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+    document.querySelectorAll('.verifyToggle').forEach(cb => {
+      cb.addEventListener('change', async () => {
+        await sb.from('signups').update({ verified: cb.checked }).eq('id', cb.dataset.id);
+        toast('Updated.');
+      });
+    });
+  }
+
+  // ---------- TESTIMONIALS ----------
+  document.getElementById('tKind').addEventListener('change', (e) => {
+    const isVideo = e.target.value === 'video';
+    document.getElementById('tQuoteField').style.display = isVideo ? 'none' : 'block';
+    document.getElementById('tVideoFields').style.display = isVideo ? 'grid' : 'none';
+  });
+
+  async function loadTestimonialsAdmin() {
+    const list = document.getElementById('testimonialsList');
+    const toggle = document.getElementById('showTestimonialsToggle');
+    if (!sb) { list.innerHTML = '<p class="empty-note">Connect Supabase to manage testimonials.</p>'; return; }
+
+    const { data: setting } = await sb.from('site_settings').select('value').eq('key', 'show_testimonials_section').maybeSingle();
+    toggle.checked = !setting || setting.value !== 'false';
+    toggle.onchange = async () => {
+      await sb.from('site_settings').upsert({ key: 'show_testimonials_section', value: toggle.checked ? 'true' : 'false' });
+      toast('Saved.');
+    };
+
+    const { data, error } = await sb.from('testimonials').select('*').order('sort_order', { ascending: true });
+    if (error) { list.innerHTML = `<p class="empty-note">Could not load: ${escapeHtml(error.message)}</p>`; return; }
+    if (!data || !data.length) { list.innerHTML = '<p class="empty-note">No testimonials yet — add one below.</p>'; return; }
+    list.innerHTML = data.map(t => `
+      <div class="card">
+        <div class="card-head">
+          <h4>${escapeHtml(t.name)} <span style="color:var(--muted);font-weight:400;">— ${escapeHtml(t.role || '')}</span></h4>
+          <div class="card-actions">
+            <label class="toggle-inline"><input type="checkbox" class="testiActiveToggle" data-id="${t.id}" ${t.is_active ? 'checked' : ''}> Active</label>
+            <button class="btn btn-danger btn-sm testiDeleteBtn" data-id="${t.id}">Delete</button>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--muted);">${t.kind === 'video' ? 'Video testimonial' : escapeHtml(t.quote || '')}</p>
+      </div>`).join('');
+    document.querySelectorAll('.testiActiveToggle').forEach(cb => cb.addEventListener('change', async () => {
+      await sb.from('testimonials').update({ is_active: cb.checked }).eq('id', cb.dataset.id);
+      toast('Updated.');
+    }));
+    document.querySelectorAll('.testiDeleteBtn').forEach(btn => btn.addEventListener('click', async () => {
+      if (!confirm('Delete this testimonial?')) return;
+      await sb.from('testimonials').delete().eq('id', btn.dataset.id);
+      loadTestimonialsAdmin();
+    }));
+  }
+
+  document.getElementById('addTestimonialBtn').addEventListener('click', async () => {
+    if (!sb) return;
+    const kind = document.getElementById('tKind').value;
+    const row = {
+      kind, name: document.getElementById('tName').value.trim(),
+      role: document.getElementById('tRole').value.trim(),
+      rating: Number(document.getElementById('tRating').value) || 5,
+      is_active: true
+    };
+    if (kind === 'text') row.quote = document.getElementById('tQuote').value.trim();
+    else { row.video_url = document.getElementById('tVideoUrl').value.trim(); row.video_poster_url = document.getElementById('tPosterUrl').value.trim(); }
+    if (!row.name) { toast('Name is required.'); return; }
+    const { error } = await sb.from('testimonials').insert([row]);
+    if (error) { toast('Error: ' + error.message); return; }
+    document.getElementById('tName').value = ''; document.getElementById('tRole').value = '';
+    document.getElementById('tQuote').value = ''; document.getElementById('tVideoUrl').value = ''; document.getElementById('tPosterUrl').value = '';
+    toast('Testimonial added.');
+    loadTestimonialsAdmin();
+  });
+
+  // ---------- FAQS ----------
+  async function loadFaqsAdmin() {
+    const list = document.getElementById('faqsList');
+    if (!sb) { list.innerHTML = '<p class="empty-note">Connect Supabase to manage FAQs.</p>'; return; }
+    const { data, error } = await sb.from('faqs').select('*').order('sort_order', { ascending: true });
+    if (error) { list.innerHTML = `<p class="empty-note">Could not load: ${escapeHtml(error.message)}</p>`; return; }
+    if (!data || !data.length) { list.innerHTML = '<p class="empty-note">No FAQs yet — add one below.</p>'; return; }
+    list.innerHTML = data.map(f => `
+      <div class="card">
+        <div class="card-head">
+          <h4>${escapeHtml(f.question)}</h4>
+          <div class="card-actions">
+            <label class="toggle-inline"><input type="checkbox" class="faqActiveToggle" data-id="${f.id}" ${f.is_active ? 'checked' : ''}> Active</label>
+            <button class="btn btn-danger btn-sm faqDeleteBtn" data-id="${f.id}">Delete</button>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--muted);">${escapeHtml(f.answer)}</p>
+      </div>`).join('');
+    document.querySelectorAll('.faqActiveToggle').forEach(cb => cb.addEventListener('change', async () => {
+      await sb.from('faqs').update({ is_active: cb.checked }).eq('id', cb.dataset.id);
+      toast('Updated.');
+    }));
+    document.querySelectorAll('.faqDeleteBtn').forEach(btn => btn.addEventListener('click', async () => {
+      if (!confirm('Delete this FAQ?')) return;
+      await sb.from('faqs').delete().eq('id', btn.dataset.id);
+      loadFaqsAdmin();
+    }));
+  }
+  document.getElementById('addFaqBtn').addEventListener('click', async () => {
+    if (!sb) return;
+    const question = document.getElementById('fqQuestion').value.trim();
+    const answer = document.getElementById('fqAnswer').value.trim();
+    const sort_order = Number(document.getElementById('fqSort').value) || 0;
+    if (!question || !answer) { toast('Question and answer are required.'); return; }
+    const { error } = await sb.from('faqs').insert([{ question, answer, sort_order, is_active: true }]);
+    if (error) { toast('Error: ' + error.message); return; }
+    document.getElementById('fqQuestion').value = ''; document.getElementById('fqAnswer').value = ''; document.getElementById('fqSort').value = 0;
+    toast('FAQ added.');
+    loadFaqsAdmin();
+  });
+
+  // ---------- PARTNERS ----------
+  async function loadPartnersAdmin() {
+    const list = document.getElementById('partnersList');
+    if (!sb) { list.innerHTML = '<p class="empty-note">Connect Supabase to manage partners.</p>'; return; }
+    const { data, error } = await sb.from('partners').select('*').order('sort_order', { ascending: true });
+    if (error) { list.innerHTML = `<p class="empty-note">Could not load: ${escapeHtml(error.message)}</p>`; return; }
+    if (!data || !data.length) { list.innerHTML = '<p class="empty-note">No partners yet — add one below.</p>'; return; }
+    list.innerHTML = data.map(p => `
+      <div class="card">
+        <div class="card-head">
+          <h4>${escapeHtml(p.name)}</h4>
+          <div class="card-actions">
+            <label class="toggle-inline"><input type="checkbox" class="partnerActiveToggle" data-id="${p.id}" ${p.is_active ? 'checked' : ''}> Active</label>
+            <button class="btn btn-danger btn-sm partnerDeleteBtn" data-id="${p.id}">Delete</button>
+          </div>
+        </div>
+        <p style="font-size:12.5px;color:var(--muted);word-break:break-all;">${escapeHtml(p.logo_url)}</p>
+      </div>`).join('');
+    document.querySelectorAll('.partnerActiveToggle').forEach(cb => cb.addEventListener('change', async () => {
+      await sb.from('partners').update({ is_active: cb.checked }).eq('id', cb.dataset.id);
+      toast('Updated.');
+    }));
+    document.querySelectorAll('.partnerDeleteBtn').forEach(btn => btn.addEventListener('click', async () => {
+      if (!confirm('Delete this partner?')) return;
+      await sb.from('partners').delete().eq('id', btn.dataset.id);
+      loadPartnersAdmin();
+    }));
+  }
+  document.getElementById('addPartnerBtn').addEventListener('click', async () => {
+    if (!sb) return;
+    const name = document.getElementById('pName').value.trim();
+    const logo_url = document.getElementById('pLogo').value.trim();
+    const sort_order = Number(document.getElementById('pSort').value) || 0;
+    if (!name || !logo_url) { toast('Name and logo URL are required.'); return; }
+    const { error } = await sb.from('partners').insert([{ name, logo_url, sort_order, is_active: true }]);
+    if (error) { toast('Error: ' + error.message); return; }
+    document.getElementById('pName').value = ''; document.getElementById('pLogo').value = ''; document.getElementById('pSort').value = 0;
+    toast('Partner added.');
+    loadPartnersAdmin();
+  });
+
+  // ---------- VEHICLE TYPES ----------
+  async function loadVehiclesAdmin() {
+    const list = document.getElementById('vehiclesList');
+    if (!sb) { list.innerHTML = '<p class="empty-note">Connect Supabase to manage vehicle types.</p>'; return; }
+    const { data, error } = await sb.from('vehicle_types').select('*').order('sort_order', { ascending: true });
+    if (error) { list.innerHTML = `<p class="empty-note">Could not load: ${escapeHtml(error.message)}</p>`; return; }
+    if (!data || !data.length) { list.innerHTML = '<p class="empty-note">No vehicle types yet — add one below.</p>'; return; }
+    list.innerHTML = data.map(v => `
+      <div class="card">
+        <div class="card-head">
+          <h4>${escapeHtml(v.label)}</h4>
+          <div class="card-actions">
+            <label class="toggle-inline"><input type="checkbox" class="vehicleActiveToggle" data-id="${v.id}" ${v.is_active ? 'checked' : ''}> Active</label>
+            <button class="btn btn-danger btn-sm vehicleDeleteBtn" data-id="${v.id}">Delete</button>
+          </div>
+        </div>
+      </div>`).join('');
+    document.querySelectorAll('.vehicleActiveToggle').forEach(cb => cb.addEventListener('change', async () => {
+      await sb.from('vehicle_types').update({ is_active: cb.checked }).eq('id', cb.dataset.id);
+      toast('Updated.');
+    }));
+    document.querySelectorAll('.vehicleDeleteBtn').forEach(btn => btn.addEventListener('click', async () => {
+      if (!confirm('Delete this vehicle type?')) return;
+      await sb.from('vehicle_types').delete().eq('id', btn.dataset.id);
+      loadVehiclesAdmin();
+    }));
+  }
+  document.getElementById('addVehicleBtn').addEventListener('click', async () => {
+    if (!sb) return;
+    const label = document.getElementById('vLabel').value.trim();
+    const sort_order = Number(document.getElementById('vSort').value) || 0;
+    if (!label) { toast('Label is required.'); return; }
+    const { error } = await sb.from('vehicle_types').insert([{ label, sort_order, is_active: true }]);
+    if (error) { toast('Error: ' + error.message); return; }
+    document.getElementById('vLabel').value = ''; document.getElementById('vSort').value = 0;
+    toast('Vehicle type added.');
+    loadVehiclesAdmin();
+  });
+
+  // ---------- SETTINGS ----------
+  async function loadSettingsAdmin() {
+    if (!sb) return;
+    const { data } = await sb.from('site_settings').select('key,value');
+    if (!data) return;
+    const s = {}; data.forEach(r => s[r.key] = r.value);
+    if (s.video_poster_url) document.getElementById('setPoster').value = s.video_poster_url;
+    if (s.video_src_url) document.getElementById('setVideoSrc').value = s.video_src_url;
+    if (s.whatsapp_channel_link) document.getElementById('setWhatsapp').value = s.whatsapp_channel_link;
+  }
+  document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+    if (!sb) return;
+    const rows = [
+      { key: 'video_poster_url', value: document.getElementById('setPoster').value.trim() },
+      { key: 'video_src_url', value: document.getElementById('setVideoSrc').value.trim() },
+      { key: 'whatsapp_channel_link', value: document.getElementById('setWhatsapp').value.trim() }
+    ];
+    const { error } = await sb.from('site_settings').upsert(rows);
+    if (error) { toast('Error: ' + error.message); return; }
+    toast('Settings saved.');
+  });
+</script>
+</body>
+</html>

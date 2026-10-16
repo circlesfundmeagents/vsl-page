@@ -243,6 +243,15 @@
   .veh-card h4{font-size:15.5px;margin-bottom:6px;}
   .veh-card p{font-size:13px;color:var(--muted);margin-bottom:14px;}
   .veh-card a{font-size:13px;font-weight:600;color:#7CF2B8;}
+  .cng-note{
+    margin-top:28px;display:flex;align-items:center;gap:18px;
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 26px;
+  }
+  .cng-icon{font-size:26px;flex-shrink:0;width:48px;height:48px;border-radius:12px;background:rgba(255,178,62,0.1);display:flex;align-items:center;justify-content:center;}
+  .cng-note h4{font-size:15.5px;margin-bottom:4px;}
+  .cng-note p{font-size:13.5px;color:var(--muted);margin:0;}
+  @media(max-width:560px){ .cng-note{flex-direction:column;text-align:center;} }
 
   /* DARK / TELEMETRY SECTION (now an elevated surface within the dark page) */
   .dark-section{
@@ -300,6 +309,30 @@
   .save-list li{font-size:14px;color:var(--muted);padding:9px 0 9px 26px;position:relative;border-top:1px solid var(--line);}
   .save-list li:first-child{border-top:none;}
   .save-list li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:700;}
+  .withdraw-note{text-align:center;margin-top:28px;font-size:13.5px;color:var(--muted);}
+
+  /* ============ SIGNUP NOTIFICATION TOAST ============ */
+  .signup-toast{
+    position:fixed;left:20px;bottom:20px;z-index:70;
+    display:flex;align-items:center;gap:12px;
+    background:rgba(11,33,24,0.96);backdrop-filter:blur(10px);
+    border:1px solid var(--line-strong);border-radius:14px;
+    padding:14px 18px;max-width:280px;
+    box-shadow:0 20px 50px -15px rgba(0,0,0,0.6), 0 0 30px -10px rgba(0,212,136,0.3);
+    transform:translateY(120%);opacity:0;
+    transition:transform .4s cubic-bezier(.2,.9,.3,1.3), opacity .3s ease;
+    pointer-events:none;
+  }
+  .signup-toast.show{transform:translateY(0);opacity:1;}
+  .signup-toast-icon{
+    width:32px;height:32px;border-radius:50%;flex-shrink:0;
+    background:rgba(0,212,136,0.15);border:1px solid rgba(0,212,136,0.4);
+    color:#7CF2B8;display:flex;align-items:center;justify-content:center;font-size:14px;
+  }
+  .signup-toast-title{font-size:13.5px;font-weight:600;color:#fff;line-height:1.3;}
+  .signup-toast-sub{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  @media(max-width:760px){ .signup-toast{bottom:84px;left:12px;right:12px;max-width:none;} }
+  @media(max-width:380px){ .signup-toast{padding:12px 14px;} .signup-toast-title{font-size:12.5px;} }
 
   /* TESTIMONIALS - EMPTY STATE */
   .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
@@ -362,6 +395,14 @@
   .field input:focus{outline:none;border-color:var(--green-deep);background:#fff;}
   .phone-row{display:flex;gap:8px;}
   .phone-row select{border-radius:11px;border:1.5px solid #E4EAE6;padding:0 10px;font-size:14px;background:#FAFBFA;color:#0B1F17;}
+  .field > select{
+    width:100%;padding:13px 15px;border-radius:11px;border:1.5px solid #E4EAE6;
+    font-family:'Inter';font-size:14.5px;background:#FAFBFA;color:#0B1F17;
+  }
+  .field > select:focus{outline:none;border-color:var(--green-deep);background:#fff;}
+  .field-toggles{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+  .toggle-row{display:flex;align-items:center;gap:10px;font-size:13.5px;color:#3A4A43;cursor:pointer;}
+  .toggle-row input{width:17px;height:17px;accent-color:var(--green-deep);flex-shrink:0;cursor:pointer;}
   .lead-form .btn{width:100%;margin-top:8px;padding:16px;font-size:15.5px;}
   .lead-form .fine{font-size:12px;color:#8FA097;text-align:center;margin-top:16px;}
 
@@ -483,14 +524,16 @@
   @keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   @media(max-width:640px){ .partner-row{display:none;} .partner-marquee{display:block;} }
 
-  /* ============ QUOTE TESTIMONIALS (carousel) ============ */
-  .quote-track{
-    display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;
-    padding:6px 4px 20px;scrollbar-width:none;
+  /* ============ QUOTE TESTIMONIALS (auto-scrolling marquee) ============ */
+  .quote-marquee-outer{position:relative;overflow:hidden;width:100%;padding:6px 0 10px;}
+  .quote-marquee-track{
+    display:flex;gap:20px;width:max-content;
+    animation:quoteMarquee 42s linear infinite;
   }
-  .quote-track::-webkit-scrollbar{display:none;}
+  .quote-marquee-outer:hover .quote-marquee-track{animation-play-state:paused;}
+  @keyframes quoteMarquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   .quote-card{
-    flex:0 0 auto;width:280px;scroll-snap-align:start;
+    flex:0 0 auto;width:280px;
     border:1px solid var(--line);border-radius:var(--radius);
     padding:30px 28px;background:var(--surface);
     transition:transform .2s ease, border-color .2s ease;
@@ -498,6 +541,7 @@
   .quote-card:hover{transform:translateY(-3px);border-color:rgba(0,212,136,0.35);}
   .quote-stars{color:var(--amber);font-size:14px;letter-spacing:2px;margin-bottom:16px;}
   .quote-card .testi-quote{color:var(--muted);font-style:normal;font-size:14.5px;line-height:1.6;}
+  @media(max-width:640px){ .quote-card{width:240px;padding:24px 22px;} }
 
   /* ============ TABBED PROGRESS SHOWCASE ============ */
   /* ============ SCROLL-DRIVEN "HOW IT WORKS" RAIL ============ */
@@ -544,6 +588,23 @@
     .pill-item{font-size:12.5px;padding:11px 18px 11px 12px;}
   }
 
+  /* ============ STATS STRIP ============ */
+  .stats-strip{padding:44px 0;background:var(--bg-1);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .stats-strip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center;}
+  @media(max-width:760px){ .stats-strip-grid{grid-template-columns:1fr 1fr;row-gap:32px;} }
+  .stat-item{display:flex;flex-direction:column;gap:6px;}
+  .stat-num{font-family:'Outfit';font-weight:800;font-size:32px;background:linear-gradient(90deg,#7CF2B8,var(--green),var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .stat-label{font-size:12.5px;color:var(--muted);font-weight:600;}
+  @media(max-width:640px){ .stat-num{font-size:26px;} .stat-label{font-size:11.5px;} }
+
+  /* ============ GUARANTEE BANNER ============ */
+  .guarantee-banner{padding:72px 0;background:radial-gradient(70% 90% at 50% 0%, rgba(255,178,62,0.12) 0%, transparent 60%), var(--bg);}
+  .guarantee-inner{max-width:760px;margin:0 auto;text-align:center;}
+  .guarantee-tag{display:inline-flex;font-size:13px;font-weight:700;color:var(--amber);background:rgba(255,178,62,0.1);border:1px solid rgba(255,178,62,0.3);padding:6px 16px;border-radius:100px;margin-bottom:20px;}
+  .guarantee-inner h2{font-size:32px;margin-bottom:18px;line-height:1.2;}
+  .guarantee-inner p{color:var(--muted);font-size:15.5px;}
+  @media(max-width:640px){ .guarantee-banner{padding:52px 0;} .guarantee-inner h2{font-size:24px;} .guarantee-inner p{font-size:14px;} }
+
   /* ============ VIDEO TESTIMONIAL CAROUSEL ============ */
   .carousel-outer{position:relative;}
   .carousel-track{
@@ -566,9 +627,6 @@
     background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.35);
     backdrop-filter:blur(6px);
     display:flex;align-items:center;justify-content:center;color:#fff;
-  }
-  .vsl-wrap iframe{
-    position:absolute;inset:0;width:100%;height:100%;border:0;z-index:3;
   }
   .video-testi-frame .duration{
     position:absolute;bottom:12px;right:12px;font-size:11px;color:#fff;
@@ -640,7 +698,9 @@
     <div class="vsl-wrap" id="vslWrap">
       <span class="vsl-badge"><span class="dot"></span> WATCH FIRST</span>
       <img class="vsl-poster" src="assets/bus.png" alt="CirclesFundMe video thumbnail" style="object-position:center 30%;background:#0E2A1E;">
-      <div id="vslPlayer"></div>
+      <video id="vslVideo" playsinline preload="none">
+        <source src="assets/your-vsl-video.mp4" type="video/mp4">
+      </video>
       <div class="vsl-overlay" id="vslOverlay">
         <div class="vsl-play">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -663,7 +723,7 @@
 <section class="partners">
   <div class="wrap">
     <p class="reveal">Backed by trusted financial partners</p>
-    <div class="partner-row reveal reveal-delay-1">
+    <div class="partner-row reveal reveal-delay-1" id="partnerRow">
       <div class="partner-chip"><img src="assets/partner-1.png" alt="Partner institution"></div>
       <div class="partner-chip"><img src="assets/partner-2.png" alt="Partner institution"></div>
       <div class="partner-chip"><img src="assets/partner-3.png" alt="Partner institution"></div>
@@ -673,7 +733,7 @@
     </div>
 
     <div class="partner-marquee reveal reveal-delay-1">
-      <div class="marquee-track">
+      <div class="marquee-track" id="partnerMarqueeTrack">
         <div class="partner-chip"><img src="assets/partner-1.png" alt="Partner institution"></div>
         <div class="partner-chip"><img src="assets/partner-2.png" alt="Partner institution"></div>
         <div class="partner-chip"><img src="assets/partner-3.png" alt="Partner institution"></div>
@@ -691,62 +751,108 @@
   </div>
 </section>
 
-<!-- QUOTE TESTIMONIALS (new — placed right after partners) -->
-<section class="pad tight">
+<!-- QUOTE TESTIMONIALS (auto-scrolling marquee; admin-controlled) -->
+<section class="pad tight" id="testimonialsSection">
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow">What Drivers Say</span>
       <h2>Real Words From Real Members</h2>
       <p>Short notes from drivers and riders growing with CirclesFundMe.</p>
     </div>
-    <div class="carousel-outer reveal reveal-delay-1">
-      <div class="carousel-fade left"></div>
-      <div class="carousel-fade right"></div>
-      <div class="quote-track" id="quoteTrack">
-        <div class="quote-card">
-          <div class="quote-stars">★★★★★</div>
-          <p class="testi-quote">[ Short testimonial quote goes here ]</p>
-          <div class="testi-who">
-            <div class="testi-avatar"></div>
-            <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
-          </div>
-        </div>
-        <div class="quote-card">
-          <div class="quote-stars">★★★★★</div>
-          <p class="testi-quote">[ Short testimonial quote goes here ]</p>
-          <div class="testi-who">
-            <div class="testi-avatar"></div>
-            <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
-          </div>
-        </div>
-        <div class="quote-card">
-          <div class="quote-stars">★★★★★</div>
-          <p class="testi-quote">[ Short testimonial quote goes here ]</p>
-          <div class="testi-who">
-            <div class="testi-avatar"></div>
-            <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
-          </div>
-        </div>
-        <div class="quote-card">
-          <div class="quote-stars">★★★★★</div>
-          <p class="testi-quote">[ Short testimonial quote goes here ]</p>
-          <div class="testi-who">
-            <div class="testi-avatar"></div>
-            <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
-          </div>
-        </div>
-        <div class="quote-card">
-          <div class="quote-stars">★★★★★</div>
-          <p class="testi-quote">[ Short testimonial quote goes here ]</p>
-          <div class="testi-who">
-            <div class="testi-avatar"></div>
-            <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
-          </div>
+  </div>
+  <div class="quote-marquee-outer reveal reveal-delay-1">
+    <div class="carousel-fade left"></div>
+    <div class="carousel-fade right"></div>
+    <div class="quote-marquee-track" id="quoteTrack">
+      <!-- default/fallback cards — replaced automatically if Supabase has active testimonials -->
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
         </div>
       </div>
-      <div class="carousel-arrows">
-        <button class="carousel-arrow" id="quotePrev" aria-label="Previous">‹</button>
-        <button class="carousel-arrow" id="quoteNext" aria-label="Next">›</button>
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <!-- duplicated set for a seamless loop (JS also does this for dynamic data) -->
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-stars">★★★★★</div>
+        <p class="testi-quote">[ Short testimonial quote goes here ]</p>
+        <div class="testi-who">
+          <div class="testi-avatar"></div>
+          <div><div class="testi-name">Name</div><div class="testi-role">Role / Vehicle type</div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -765,37 +871,6 @@
       <p>CirclesFundMe is an app that helps you save money, build good credit, and get financing for a vehicle. We help drivers move from renting a vehicle to owning one.</p>
       <p>Our main focus is <strong>Mobility Finance</strong>. We help drivers save for and finance the tricycles, buses, and vehicles they use to earn money. Pick a weekly or monthly savings plan that fits your income. Build a strong savings record. Then unlock a payment plan to get the vehicle you need.</p>
       <a href="#apply" class="btn btn-primary" style="margin-top:8px;">Become A Vehicle Owner</a>
-    </div>
-  </div>
-</section>
-
-<!-- PRODUCTS -->
-<section class="pad tight" style="background:var(--bg-1);" id="mobility">
-  <div class="wrap">
-    <div class="sec-head center reveal">
-      <span class="eyebrow">One App. Many Ways to Grow</span>
-      <h2>Financial Products Built for Commercial Drivers</h2>
-      <p>Whether you drive a keke, a bus, or run a small fleet, we have savings and loan tools built for you.</p>
-    </div>
-    <div class="card-grid reveal reveal-delay-1">
-      <div class="prod-card">
-        <div class="prod-icon">🚐</div>
-        <h3>Mobility Finance</h3>
-        <p>Get financing for tricycles, buses, and other work vehicles. Fast approval. Easy payment plans based on how much you earn.</p>
-        <a href="#" class="link">Learn More →</a>
-      </div>
-      <div class="prod-card">
-        <div class="prod-icon">📈</div>
-        <h3>SME Finance</h3>
-        <p>Get a loan based on your business and income. Use it for stock, spare parts, or equipment.</p>
-        <a href="#" class="link">Learn More →</a>
-      </div>
-      <div class="prod-card">
-        <div class="prod-icon">💰</div>
-        <h3 id="savings">Savings</h3>
-        <p>Save money your way — flexible or locked. Save alone or with your group.</p>
-        <a href="#" class="link">Learn More →</a>
-      </div>
     </div>
   </div>
 </section>
@@ -826,48 +901,58 @@
       </div>
 
       <div class="scrolly-step" data-step="1">
-        <div class="scrolly-frame"><img src="assets/phone.png" alt="Contribute savings"></div>
+        <div class="scrolly-frame"><img src="assets/phone.png" alt="Contribute towards your downpayment"></div>
         <h3><span class="step-no">02</span>Contribute</h3>
-        <p>Save often, weekly or monthly, to build a strong savings record inside the app.</p>
+        <p>Save toward your downpayment. The minimum is just 10% — but you can choose to pay more upfront too, anywhere from 20% up to 50%, to lower your repayments.</p>
         <div class="pill-list">
-          <div class="pill-item"><span class="pill-check">✓</span> Track every contribution live</div>
-          <div class="pill-item"><span class="pill-check">✓</span> Plans that fit your income</div>
+          <div class="pill-item"><span class="pill-check">✓</span> 10% minimum downpayment</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Or choose 20% – 50% upfront</div>
         </div>
       </div>
 
       <div class="scrolly-step" data-step="2">
-        <div class="scrolly-frame"><img src="assets/tricycle.png" alt="Qualify for financing"></div>
+        <div class="scrolly-frame"><img src="assets/tricycle.png" alt="Qualify as a verified member"></div>
         <h3><span class="step-no">03</span>Qualify</h3>
-        <p>Your savings record unlocks a payment plan made just for you — no rigid collateral needed.</p>
+        <p>Save consistently on the platform for a minimum of 3 months. This makes you a verified member of the cooperative society, able to access financing.</p>
         <div class="pill-list">
-          <div class="pill-item"><span class="pill-check">✓</span> Based on your own record</div>
-          <div class="pill-item"><span class="pill-check">✓</span> Group guarantees help too</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Minimum 3 months of consistent saving</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Become a verified cooperative member</div>
         </div>
       </div>
 
       <div class="scrolly-step" data-step="3">
-        <div class="scrolly-frame"><img src="assets/bus.png" alt="Finance your vehicle"></div>
-        <h3><span class="step-no">04</span>Finance</h3>
-        <p>Get the tricycle, bus, or vehicle you need to earn money — and start driving it right away.</p>
+        <div class="scrolly-frame"><img src="assets/phone.png" alt="Group guarantee of 5 verified members"></div>
+        <h3><span class="step-no">04</span>Group Guarantee</h3>
+        <p>Financing requires a group of 5 registered members. Everyone in your group must also be a verified member — meaning each person has saved consistently for at least 3 months too.</p>
         <div class="pill-list">
-          <div class="pill-item"><span class="pill-check">✓</span> Tricycles, buses, cars &amp; trucks</div>
-          <div class="pill-item"><span class="pill-check">✓</span> Fast, transparent approval</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Group of 5 registered members</div>
+          <div class="pill-item"><span class="pill-check">✓</span> All verified with 3+ months saved</div>
         </div>
       </div>
 
       <div class="scrolly-step" data-step="4">
-        <div class="scrolly-frame"><img src="assets/phone.png" alt="Repay automatically"></div>
-        <h3><span class="step-no">05</span>Repay</h3>
-        <p>Pay it back a little at a time, matched automatically to your daily earnings.</p>
+        <div class="scrolly-frame"><img src="assets/bus.png" alt="Finance your vehicle with insurance and tracking"></div>
+        <h3><span class="step-no">05</span>Finance</h3>
+        <p>Get the tricycle, bus, or vehicle you need to earn money. Every vehicle comes with a tracker installed and full insurance, included — no exceptions.</p>
         <div class="pill-list">
-          <div class="pill-item"><span class="pill-check">✓</span> Payments that flex with income</div>
-          <div class="pill-item"><span class="pill-check">✓</span> No surprise charges</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Tricycles, buses, cars &amp; trucks</div>
+          <div class="pill-item"><span class="pill-check">✓</span> Tracker + full insurance included</div>
         </div>
       </div>
 
       <div class="scrolly-step" data-step="5">
+        <div class="scrolly-frame"><img src="assets/phone.png" alt="Repay automatically"></div>
+        <h3><span class="step-no">06</span>Repay</h3>
+        <p>Pay it back a little at a time, matched automatically to your daily earnings, at 12% per annum on a reducing balance.</p>
+        <div class="pill-list">
+          <div class="pill-item"><span class="pill-check">✓</span> Payments that flex with income</div>
+          <div class="pill-item"><span class="pill-check">✓</span> 12% per annum, reducing balance</div>
+        </div>
+      </div>
+
+      <div class="scrolly-step" data-step="6">
         <div class="scrolly-frame"><img src="assets/truck.png" alt="Own and grow"></div>
-        <h3><span class="step-no">06</span>Own &amp; Grow</h3>
+        <h3><span class="step-no">07</span>Own &amp; Grow</h3>
         <p>Own your vehicle fully. Then qualify for an even bigger loan for your next one.</p>
         <div class="pill-list">
           <div class="pill-item"><span class="pill-check">✓</span> Full ownership, no strings</div>
@@ -878,8 +963,41 @@
   </div>
 </section>
 
+<!-- STATS STRIP -->
+<section class="stats-strip">
+  <div class="wrap stats-strip-grid reveal">
+    <div class="stat-item">
+      <span class="stat-num">12%</span>
+      <span class="stat-label">Per annum, reducing balance</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">3,000+</span>
+      <span class="stat-label">Active savers on the platform</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">3+ yrs</span>
+      <span class="stat-label">In operation, helping drivers grow</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">24/7</span>
+      <span class="stat-label">Customer support, always on</span>
+    </div>
+  </div>
+</section>
+
+<!-- GUARANTEE BANNER -->
+<section class="guarantee-banner">
+  <div class="wrap reveal">
+    <div class="guarantee-inner">
+      <span class="guarantee-tag">Our Promise</span>
+      <h2>You Won't Find A Deal Like This Anywhere Else In Nigeria.</h2>
+      <p>10% minimum downpayment. 12% per annum on a reducing balance. Full insurance and a tracker on every vehicle. A straightforward path to full ownership. We built CirclesFundMe to be the fairest way for a commercial driver to own the vehicle they drive — compare us to anyone.</p>
+    </div>
+  </div>
+</section>
+
 <!-- VEHICLE TYPES -->
-<section class="pad tight" style="background:var(--bg-1);">
+<section class="pad tight" style="background:var(--bg-1);" id="mobility">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Mobility Finance</span>
@@ -902,6 +1020,13 @@
       <div class="veh-card">
         <div class="veh-img"><img src="assets/heavy-duty.png" alt="Heavy duty finance"></div>
         <div class="veh-body"><h4>Heavy Duty Finance</h4><p>Get a loan for big trucks that haul goods.</p><a href="#apply">Learn More →</a></div>
+      </div>
+    </div>
+    <div class="cng-note reveal reveal-delay-2">
+      <span class="cng-icon">⛽</span>
+      <div>
+        <h4>Want to run on CNG?</h4>
+        <p>Every vehicle on CirclesFundMe can include a CNG conversion in the plan — lower running costs, more money in your pocket at the end of the day.</p>
       </div>
     </div>
   </div>
@@ -928,20 +1053,20 @@
 <section class="pad dark-section">
   <div class="wrap telemetry-grid">
     <div>
-      <span class="eyebrow on-dark">Live Tracking</span>
-      <h2 style="font-size:32px;margin-bottom:16px;">We Don't Just Finance the Vehicle. We Help You Run It Smarter.</h2>
-      <p style="color:rgba(255,255,255,0.65);font-size:15.5px;margin-bottom:24px;">We track how your vehicle is used. This helps you earn more each day.</p>
+      <span class="eyebrow on-dark">Your Vehicle Is Protected</span>
+      <h2 style="font-size:32px;margin-bottom:16px;">Every Vehicle We Finance Is Fully Insured And Fully Tracked. No Exceptions.</h2>
+      <p style="color:rgba(255,255,255,0.65);font-size:15.5px;margin-bottom:24px;">This is not optional, and it is not an add-on. It is built into every single plan, for every single vehicle, every time.</p>
       <ul class="telemetry-list">
-        <li>8 hours of daily use, tracked to keep your vehicle running longer</li>
-        <li>Route tips to help you find better-paying trips</li>
-        <li>Payments that adjust to how much you actually earn</li>
+        <li>Comprehensive insurance on every vehicle we finance</li>
+        <li>GPS trackers installed on every vehicle, no exceptions</li>
+        <li>Real-time monitoring that protects your investment and ours</li>
       </ul>
     </div>
     <div class="telemetry-card reveal reveal-delay-2">
       <span class="live-tag"><span class="dot"></span> LIVE SYSTEM</span>
-      <div class="telemetry-stat"><span class="label">Daily Operating Hours</span><span class="value">8.4 hrs</span></div>
-      <div class="telemetry-stat"><span class="label">Earning Potential</span><span class="value">94%</span></div>
-      <div class="telemetry-stat"><span class="label">Payment Score</span><span class="value">87 / 100</span></div>
+      <div class="telemetry-stat"><span class="label">Insurance Coverage</span><span class="value">100%</span></div>
+      <div class="telemetry-stat"><span class="label">Vehicles Tracked</span><span class="value">100%</span></div>
+      <div class="telemetry-stat"><span class="label">Claims Support</span><span class="value">24/7</span></div>
     </div>
   </div>
 </section>
@@ -966,7 +1091,7 @@
 </section>
 
 <!-- SAVINGS PLANS -->
-<section class="pad tight" style="background:var(--bg-1);">
+<section class="pad tight" style="background:var(--bg-1);" id="savings">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Grow Together</span>
@@ -997,6 +1122,7 @@
         <a href="#apply" class="btn btn-white">Open Lock-Up Account</a>
       </div>
     </div>
+    <p class="withdraw-note reveal reveal-delay-2">💡 You can withdraw your savings or contributions at any time. Withdrawals are processed within 24–48 hours.</p>
   </div>
 </section>
 
@@ -1083,7 +1209,7 @@
       <span class="eyebrow">Frequently Asked Questions</span>
       <h2>Got Questions? We've Got Answers</h2>
     </div>
-    <div class="faq-list">
+    <div class="faq-list" id="faqList">
       <div class="faq-item open">
         <div class="faq-q">Is the program suitable for women? <span class="icon">+</span></div>
         <div class="faq-a"><p>Yes! CirclesFundMe is open to any driver ready to save regularly. It doesn't matter if you're a man or a woman.</p></div>
@@ -1115,7 +1241,7 @@
       <img class="lead-phone-accent" src="assets/phone.png" alt="">
       <span class="eyebrow on-dark">Get One Step Closer</span>
       <h2>Start Your Savings Plan Today</h2>
-      <p>Fill in your details below. We'll reach out with next steps and add you to our WhatsApp group for updates and support.</p>
+      <p>Fill in your details below. You'll be taken straight to our WhatsApp community to join other drivers and start your journey.</p>
       <ul class="lead-points">
         <li>No strict collateral needed</li>
         <li>Weekly or monthly plans that fit your income</li>
@@ -1124,7 +1250,7 @@
     </div>
     <form class="lead-form reveal reveal-delay-1" id="leadForm">
       <h3>Join CirclesFundMe</h3>
-      <p class="sub">It takes less than a minute.</p>
+      <p class="sub">Takes less than two minutes — then straight to WhatsApp.</p>
       <div class="field">
         <label for="fullName">Full Name</label>
         <input type="text" id="fullName" name="fullName" placeholder="e.g. Musa Ibrahim" required>
@@ -1136,7 +1262,7 @@
       <div class="field">
         <label for="whatsapp">WhatsApp Phone Number</label>
         <div class="phone-row">
-          <select name="countryCode" aria-label="Country code">
+          <select name="countryCode" id="countryCode" aria-label="Country code">
             <option value="+234">🇳🇬 +234</option>
             <option value="+233">🇬🇭 +233</option>
             <option value="+254">🇰🇪 +254</option>
@@ -1145,7 +1271,25 @@
           <input type="tel" id="whatsapp" name="whatsapp" placeholder="801 234 5678" required style="flex:1;">
         </div>
       </div>
-      <button type="submit" class="btn btn-primary">Get Started Free</button>
+      <div class="field">
+        <label for="vehicleType">What vehicle do you want?</label>
+        <select id="vehicleType" name="vehicleType">
+          <option value="Tricycle (Keke)">Tricycle (Keke)</option>
+          <option value="Commercial Bus">Commercial Bus</option>
+          <option value="Sedan / Car">Sedan / Car</option>
+          <option value="Heavy Duty Truck">Heavy Duty Truck</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field" id="otherVehicleField" style="display:none;">
+        <label for="vehicleTypeOther">Tell us what vehicle</label>
+        <input type="text" id="vehicleTypeOther" name="vehicleTypeOther" placeholder="e.g. Minibus">
+      </div>
+      <div class="field-toggles">
+        <label class="toggle-row"><input type="checkbox" id="wantsCng" name="wantsCng"> <span>I'd like the CNG conversion option</span></label>
+        <label class="toggle-row"><input type="checkbox" id="wantsAmbassador" name="wantsAmbassador"> <span>I'd like to become a Brand Ambassador</span></label>
+      </div>
+      <button type="submit" class="btn btn-primary" id="leadSubmitBtn">Get Started — Join WhatsApp</button>
       <p class="fine">We'll never spam you. Your details are safe with us.</p>
     </form>
   </div>
@@ -1165,9 +1309,9 @@
       </div>
       <div class="foot-col">
         <h5>PRODUCTS</h5>
-        <a href="#mobility">Mobility Finance</a>
-        <a href="#">SME Finance</a>
+        <a href="#mobility">Vehicle Finance</a>
         <a href="#savings">Savings Plans</a>
+        <a href="#how-it-works">How It Works</a>
       </div>
       <div class="foot-col">
         <h5>LEGAL</h5>
@@ -1183,40 +1327,258 @@
   </div>
 </footer>
 
+<div class="signup-toast" id="signupToast">
+  <div class="signup-toast-icon">✓</div>
+  <div class="signup-toast-body">
+    <div class="signup-toast-title" id="signupToastTitle">Someone just joined</div>
+    <div class="signup-toast-sub" id="signupToastSub">CirclesFundMe</div>
+  </div>
+</div>
+
 <div class="sticky-cta">
   <span class="sticky-full">Ready to own your vehicle?</span>
   <span class="sticky-short">Own your vehicle</span>
   <a href="#apply" class="btn btn-primary">Apply Now</a>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/config.js"></script>
 <script>
-  document.querySelectorAll('.faq-item').forEach(item=>{
-    item.querySelector('.faq-q').addEventListener('click', ()=>{
-      const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
-      if(!isOpen) item.classList.add('open');
+  const sbClient = (typeof SUPABASE_CONFIGURED !== 'undefined' && SUPABASE_CONFIGURED && typeof supabase !== 'undefined')
+    ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
+  // Every loader below is defensive on purpose: if Supabase isn't set up
+  // yet, or a table is empty, or a request fails, the page just keeps
+  // whatever is already hardcoded in the HTML. Nothing breaks either way.
+
+  async function loadSiteSettings() {
+    if (!sbClient) return;
+    try {
+      const { data, error } = await sbClient.from('site_settings').select('key,value');
+      if (error || !data) return;
+      const settings = {};
+      data.forEach(row => settings[row.key] = row.value);
+
+      if (settings.whatsapp_channel_link) whatsappLink = settings.whatsapp_channel_link;
+
+      if (settings.video_poster_url) {
+        const poster = document.querySelector('.vsl-poster');
+        if (poster) poster.src = settings.video_poster_url;
+      }
+      if (settings.video_src_url) {
+        const source = document.querySelector('#vslVideo source');
+        if (source) source.src = settings.video_src_url;
+      }
+      if (settings.show_testimonials_section === 'false') {
+        const sec = document.getElementById('testimonialsSection');
+        if (sec) sec.style.display = 'none';
+      }
+    } catch (err) { console.error('loadSiteSettings failed:', err); }
+  }
+
+  async function loadTestimonials() {
+    if (!sbClient) return;
+    try {
+      const { data, error } = await sbClient
+        .from('testimonials').select('*')
+        .eq('is_active', true).order('sort_order', { ascending: true });
+      if (error || !data || !data.length) return;
+
+      const textOnes = data.filter(t => t.kind === 'text');
+      const videoOnes = data.filter(t => t.kind === 'video');
+
+      if (textOnes.length) {
+        const track = document.getElementById('quoteTrack');
+        const cardsHtml = textOnes.map(t => `
+          <div class="quote-card">
+            <div class="quote-stars">${'★'.repeat(t.rating || 5)}</div>
+            <p class="testi-quote">${escapeHtml(t.quote || '')}</p>
+            <div class="testi-who">
+              <div class="testi-avatar"></div>
+              <div><div class="testi-name">${escapeHtml(t.name)}</div><div class="testi-role">${escapeHtml(t.role || '')}</div></div>
+            </div>
+          </div>`).join('');
+        track.innerHTML = cardsHtml + cardsHtml; // doubled for the seamless marquee loop
+      }
+
+      if (videoOnes.length) {
+        const track = document.getElementById('carouselTrack');
+        if (track) {
+          track.innerHTML = videoOnes.map(t => `
+            <div class="video-testi-card">
+              <div class="video-testi-frame"${t.video_poster_url ? ` style="background-image:url('${escapeHtml(t.video_poster_url)}');background-size:cover;background-position:center;"` : ''} data-video="${escapeHtml(t.video_url || '')}">
+                <span class="mute-badge">VIDEO</span>
+                <div class="play-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+                <span class="duration">0:00</span>
+              </div>
+              <div class="video-testi-caption">
+                <div class="testi-name">${escapeHtml(t.name)}</div>
+                <div class="testi-role">${escapeHtml(t.role || '')}</div>
+              </div>
+            </div>`).join('');
+        }
+      }
+    } catch (err) { console.error('loadTestimonials failed:', err); }
+  }
+
+  async function loadFaqs() {
+    if (!sbClient) return;
+    try {
+      const { data, error } = await sbClient
+        .from('faqs').select('*')
+        .eq('is_active', true).order('sort_order', { ascending: true });
+      if (error || !data || !data.length) return;
+      const list = document.getElementById('faqList');
+      if (!list) return;
+      list.innerHTML = data.map((f, i) => `
+        <div class="faq-item${i === 0 ? ' open' : ''}">
+          <div class="faq-q">${escapeHtml(f.question)} <span class="icon">+</span></div>
+          <div class="faq-a"><p>${escapeHtml(f.answer)}</p></div>
+        </div>`).join('');
+      wireFaqItems();
+    } catch (err) { console.error('loadFaqs failed:', err); }
+  }
+
+  async function loadPartners() {
+    if (!sbClient) return;
+    try {
+      const { data, error } = await sbClient
+        .from('partners').select('*')
+        .eq('is_active', true).order('sort_order', { ascending: true });
+      if (error || !data || !data.length) return;
+      const chipsHtml = data.map(p => `<div class="partner-chip"><img src="${escapeHtml(p.logo_url)}" alt="${escapeHtml(p.name)}"></div>`).join('');
+      const row = document.getElementById('partnerRow');
+      const marqueeTrack = document.getElementById('partnerMarqueeTrack');
+      if (row) row.innerHTML = chipsHtml;
+      if (marqueeTrack) marqueeTrack.innerHTML = chipsHtml + chipsHtml;
+    } catch (err) { console.error('loadPartners failed:', err); }
+  }
+
+  async function loadVehicleTypes() {
+    if (!sbClient) return;
+    try {
+      const { data, error } = await sbClient
+        .from('vehicle_types').select('*')
+        .eq('is_active', true).order('sort_order', { ascending: true });
+      if (error || !data || !data.length) return;
+      const select = document.getElementById('vehicleType');
+      if (!select) return;
+      select.innerHTML = data.map(v => `<option value="${escapeHtml(v.label)}">${escapeHtml(v.label)}</option>`).join('')
+        + '<option value="Other">Other</option>';
+    } catch (err) { console.error('loadVehicleTypes failed:', err); }
+  }
+
+  // Rotating "X just joined" toast, built only from signups the admin has
+  // marked verified — so it only ever shows real people, never placeholders.
+  async function initSignupToast() {
+    if (!sbClient) return;
+    try {
+      const { data, error } = await sbClient
+        .from('signups').select('full_name,vehicle_type,created_at')
+        .eq('verified', true).order('created_at', { ascending: false }).limit(20);
+      if (error || !data || !data.length) return;
+
+      const toast = document.getElementById('signupToast');
+      const titleEl = document.getElementById('signupToastTitle');
+      const subEl = document.getElementById('signupToastSub');
+      let i = 0;
+
+      function showNext() {
+        const row = data[i % data.length];
+        const firstName = (row.full_name || '').split(' ')[0] || 'Someone';
+        titleEl.textContent = `${firstName} just joined CirclesFundMe`;
+        subEl.textContent = row.vehicle_type ? `Interested in: ${row.vehicle_type}` : 'New member';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 5000);
+        i++;
+      }
+      setTimeout(showNext, 4000);
+      setInterval(showNext, 11000);
+    } catch (err) { console.error('initSignupToast failed:', err); }
+  }
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  }
+  function wireFaqItems(){
+    document.querySelectorAll('.faq-item').forEach(item=>{
+      item.querySelector('.faq-q').addEventListener('click', ()=>{
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+        if(!isOpen) item.classList.add('open');
+      });
     });
-  });
+  }
+  wireFaqItems();
+
+  // ===== Kick off all Supabase data loads (each is a no-op if not configured) =====
+  loadSiteSettings();
+  loadTestimonials();
+  loadFaqs();
+  loadPartners();
+  loadVehicleTypes();
+  initSignupToast();
 
   // VSL video: click poster to play
-const vslWrap = document.getElementById('vslWrap');
-const vslPlayer = document.getElementById('vslPlayer');
-const vslOverlay = document.getElementById('vslOverlay');
-vslOverlay.addEventListener('click', ()=>{
-  vslWrap.classList.add('playing');
-  const iframe = document.createElement('iframe');
-  iframe.src = 'https://www.youtube.com/embed/WHXz1rc4tlM?autoplay=1&rel=0&modestbranding=1&playsinline=1';
-  iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-  iframe.allowFullscreen = true;
-  iframe.title = 'CirclesFundMe video';
-  vslPlayer.appendChild(iframe);
-});
+  const vslWrap = document.getElementById('vslWrap');
+  const vslVideo = document.getElementById('vslVideo');
+  const vslOverlay = document.getElementById('vslOverlay');
+  vslOverlay.addEventListener('click', ()=>{
+    vslWrap.classList.add('playing');
+    vslVideo.setAttribute('controls', 'true');
+    vslVideo.play().catch(()=>{ /* swap in a real video source to enable playback */ });
+  });
 
-  document.getElementById('leadForm').addEventListener('submit', function(e){
+  // Show the "tell us what vehicle" field only when "Other" is picked
+  const vehicleTypeSelect = document.getElementById('vehicleType');
+  const otherVehicleField = document.getElementById('otherVehicleField');
+  if (vehicleTypeSelect) {
+    vehicleTypeSelect.addEventListener('change', () => {
+      otherVehicleField.style.display = vehicleTypeSelect.value === 'Other' ? 'block' : 'none';
+    });
+  }
+
+  // Where to send people right after signup — pulled from site_settings if
+  // Supabase is configured, otherwise the fallback in assets/config.js.
+  let whatsappLink = (typeof FALLBACK_WHATSAPP_LINK !== 'undefined') ? FALLBACK_WHATSAPP_LINK : '#';
+
+  document.getElementById('leadForm').addEventListener('submit', async function (e) {
     e.preventDefault();
-    // TODO: wire this up to your form backend / CRM / email automation.
-    // On success, redirect to the thank-you page:
-    window.location.href = 'thank-you.html';
+    const btn = document.getElementById('leadSubmitBtn');
+    const originalLabel = btn.textContent;
+    btn.textContent = 'Joining…';
+    btn.disabled = true;
+
+    const fullName = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const code = document.getElementById('countryCode').value;
+    const whatsapp = code + ' ' + document.getElementById('whatsapp').value.trim();
+    const vehicleType = vehicleTypeSelect ? vehicleTypeSelect.value : null;
+    const vehicleTypeOther = document.getElementById('vehicleTypeOther') ? document.getElementById('vehicleTypeOther').value.trim() : null;
+    const wantsCng = document.getElementById('wantsCng') ? document.getElementById('wantsCng').checked : false;
+    const wantsAmbassador = document.getElementById('wantsAmbassador') ? document.getElementById('wantsAmbassador').checked : false;
+
+    if (sbClient) {
+      try {
+        await sbClient.from('signups').insert([{
+          full_name: fullName,
+          email: email,
+          whatsapp: whatsapp,
+          vehicle_type: vehicleType,
+          vehicle_type_other: vehicleTypeOther || null,
+          wants_cng: wantsCng,
+          wants_ambassador: wantsAmbassador
+        }]);
+      } catch (err) {
+        console.error('Signup could not be saved to Supabase:', err);
+        // We still move the person on to WhatsApp below — a failed save
+        // shouldn't block someone from joining the community.
+      }
+    }
+
+    window.location.href = whatsappLink;
   });
 
   // ===== Mobile hamburger menu =====
@@ -1318,7 +1680,6 @@ vslOverlay.addEventListener('click', ()=>{
     next.addEventListener('click', ()=>scrollByDir(1));
   }
   wireCarousel('carouselTrack', 'carouselPrev', 'carouselNext', '.video-testi-card');
-  wireCarousel('quoteTrack', 'quotePrev', 'quoteNext', '.quote-card');
 </script>
 
 </body>
