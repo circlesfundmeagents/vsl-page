@@ -4,8 +4,8 @@
 // Both index.html and admin.html load this file.
 // =====================================================================
 
-const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";      // e.g. https://abcdefgh.supabase.co
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_PUBLIC_KEY";
+const SUPABASE_URL = "https://ejmrwqliumwdkwmpikjc.supabase.co";      // e.g. https://abcdefgh.supabase.co
+const SUPABASE_ANON_KEY = "sb_publishable_m0MaXdvrIuW6elfPxrV7eQ_8xgum5uA";
 
 // Fallback WhatsApp link used only if the site_settings table hasn't
 // loaded yet (slow connection) or Supabase isn't configured at all.
